@@ -10,6 +10,20 @@ import {
 import "./App.css";
 import "./FrostPanel.css";
 import "./InstructorControl.css";
+import "./Classroom.css";
+
+import {
+  closeRoom,
+  createRoom,
+  getInstructorStatus,
+  getStudentStatus,
+  heartbeat,
+  joinRoom,
+  leaveRoom,
+  recordAttempt as recordClassroomAttempt,
+  updateAssignment,
+  type ClassroomParticipant,
+} from "./lib/classroomApi";
 
 import {
   createInitialRadioState,
@@ -407,6 +421,18 @@ function parseInstructorTone(value: string): number | null | undefined {
   return parsed;
 }
 
+type ClassroomRole = "NONE" | "INSTRUCTOR" | "STUDENT";
+
+
+interface ClassroomAssignmentPayload {
+  assignment: AppliedInstructorAssignment | null;
+  grading: InstructorGradingSettings;
+  timerMinutes: number;
+  assignmentDetailsVisible: boolean;
+  locked: boolean;
+}
+
+
 /* =========================================
    APP
 ========================================= */
@@ -497,6 +523,36 @@ function App() {
 
   const [studentSessionMessage, setStudentSessionMessage] =
     useState("Enter the student name and class, then begin the session.");
+
+  const [classroomRole, setClassroomRole] =
+    useState<ClassroomRole>("NONE");
+
+  const [roomCode, setRoomCode] =
+    useState(() => {
+      const params = new URLSearchParams(window.location.search);
+      return (params.get("room") ?? "").toUpperCase();
+    });
+
+  const [roomId, setRoomId] =
+    useState<string | null>(null);
+
+  const [participantId, setParticipantId] =
+    useState<string | null>(null);
+
+  const [participantToken, setParticipantToken] =
+    useState<string | null>(null);
+
+  const [instructorToken, setInstructorToken] =
+    useState<string | null>(null);
+
+  const [classroomMessage, setClassroomMessage] =
+    useState("Create an instructor room or join with a six-character room code.");
+
+  const [connectedStudents, setConnectedStudents] =
+    useState<ClassroomParticipant[]>([]);
+
+  const [classroomBusy, setClassroomBusy] =
+    useState(false);
 
   /* =======================================
      SAVE MEMORIES
@@ -590,6 +646,541 @@ function App() {
       instructorReopenedSession,
     ]
   );
+
+
+  useEffect(() => {
+    if (
+      !roomId ||
+      !instructorToken ||
+      classroomRole !== "INSTRUCTOR"
+    ) {
+      return;
+    }
+
+    const activeRoomId = roomId;
+    const activeInstructorToken = instructorToken;
+    let cancelled = false;
+
+    async function refreshInstructorRoom() {
+      try {
+        const status = await getInstructorStatus(
+          activeRoomId,
+          activeInstructorToken
+        );
+
+        if (cancelled) {
+          return;
+        }
+
+        setConnectedStudents(status.students ?? []);
+
+        if (status.room.status === "CLOSED") {
+          setClassroomMessage(`Room ${roomCode} is closed.`);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setClassroomMessage(
+            error instanceof Error
+              ? error.message
+              : "Could not refresh classroom roster."
+          );
+        }
+      }
+    }
+
+    void refreshInstructorRoom();
+
+    const intervalId = window.setInterval(
+      () => {
+        void refreshInstructorRoom();
+      },
+      1500
+    );
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [
+    roomId,
+    instructorToken,
+    classroomRole,
+    roomCode,
+  ]);
+
+  useEffect(() => {
+    if (
+      !participantId ||
+      !participantToken ||
+      classroomRole !== "STUDENT"
+    ) {
+      return;
+    }
+
+    const activeParticipantId = participantId;
+    const activeParticipantToken = participantToken;
+    let cancelled = false;
+
+    async function refreshStudentRoom() {
+      try {
+        const status = await getStudentStatus(
+          activeParticipantId,
+          activeParticipantToken
+        );
+
+        if (cancelled) {
+          return;
+        }
+
+        if (status.room.status === "CLOSED") {
+          setClassroomMessage(
+            "This classroom has been closed by the instructor."
+          );
+          setTimerRunning(false);
+          return;
+        }
+
+        const payload =
+          status.room.active_assignment as
+            | ClassroomAssignmentPayload
+            | null;
+
+        if (!payload) {
+          setAppliedAssignment(null);
+          setAssignmentMessage(
+            "Waiting for the instructor to apply an assignment."
+          );
+          return;
+        }
+
+        setAppliedAssignment(
+          payload.assignment ?? null
+        );
+
+        setGradingSettings({
+          ...DEFAULT_GRADING_SETTINGS,
+          ...(payload.grading ?? {}),
+        });
+
+        setTimerMinutes(
+          payload.timerMinutes ?? 10
+        );
+
+        setTimerSecondsRemaining(
+          status.room.timer_seconds ??
+            (payload.timerMinutes ?? 10) * 60
+        );
+
+        setAssignmentDetailsVisible(
+          Boolean(
+            payload.assignmentDetailsVisible
+          )
+        );
+
+        setAssignmentLocked(
+          Boolean(payload.locked)
+        );
+
+        setAssignmentMessage(
+          payload.assignment
+            ? `Live classroom assignment: ${payload.assignment.scenarioName}`
+            : "Waiting for the instructor to apply an assignment."
+        );
+      } catch (error) {
+        if (!cancelled) {
+          setClassroomMessage(
+            error instanceof Error
+              ? error.message
+              : "Could not refresh classroom assignment."
+          );
+        }
+      }
+    }
+
+    void refreshStudentRoom();
+
+    const intervalId = window.setInterval(
+      () => {
+        void refreshStudentRoom();
+      },
+      1500
+    );
+
+    const heartbeatId = window.setInterval(
+      () => {
+        void heartbeat(
+          activeParticipantId,
+          activeParticipantToken
+        );
+      },
+      15000
+    );
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+      window.clearInterval(heartbeatId);
+    };
+  }, [
+    participantId,
+    participantToken,
+    classroomRole,
+  ]);
+
+  useEffect(() => {
+    if (
+      !roomId ||
+      !instructorToken ||
+      classroomRole !== "INSTRUCTOR"
+    ) {
+      return;
+    }
+
+    const payload: ClassroomAssignmentPayload = {
+      assignment: appliedAssignment,
+      grading: normalizeGradingSettings(
+        gradingSettings
+      ),
+      timerMinutes,
+      assignmentDetailsVisible,
+      locked: assignmentLocked,
+    };
+
+    const timeoutId =
+      window.setTimeout(() => {
+        void updateAssignment(
+          roomId,
+          instructorToken,
+          payload,
+          Math.max(
+            0,
+            timerSecondsRemaining
+          )
+        ).catch(error => {
+          setClassroomMessage(
+            error instanceof Error
+              ? error.message
+              : "Could not synchronize assignment."
+          );
+        });
+      }, 250);
+
+    return () =>
+      window.clearTimeout(timeoutId);
+  }, [
+    roomId,
+    instructorToken,
+    classroomRole,
+    appliedAssignment,
+    gradingSettings,
+    timerMinutes,
+    timerSecondsRemaining,
+    assignmentDetailsVisible,
+    assignmentLocked,
+  ]);
+
+  async function createClassroomRoom() {
+    setClassroomBusy(true);
+    setClassroomMessage(
+      "Creating Black Sky classroom..."
+    );
+
+    try {
+      const createdRoom =
+        await createRoom(
+          timerMinutes * 60
+        );
+
+      setRoomId(createdRoom.id);
+      setInstructorToken(
+        createdRoom.instructor_token
+      );
+      setParticipantId(null);
+      setParticipantToken(null);
+      setRoomCode(
+        createdRoom.room_code
+      );
+      setClassroomRole(
+        "INSTRUCTOR"
+      );
+      setConnectedStudents([]);
+      setClassroomMessage(
+        `Room ${createdRoom.room_code} is open. Share the room code or student link.`
+      );
+
+      sessionStorage.setItem(
+        "black-sky-instructor-room",
+        JSON.stringify({
+          roomId: createdRoom.id,
+          roomCode:
+            createdRoom.room_code,
+          instructorToken:
+            createdRoom.instructor_token,
+        })
+      );
+
+      const nextUrl =
+        new URL(
+          window.location.href
+        );
+
+      nextUrl.searchParams.delete(
+        "room"
+      );
+
+      window.history.replaceState(
+        {},
+        "",
+        nextUrl
+      );
+    } catch (error) {
+      setClassroomMessage(
+        error instanceof Error
+          ? error.message
+          : "Could not create classroom."
+      );
+    } finally {
+      setClassroomBusy(false);
+    }
+  }
+
+  async function joinClassroomRoom() {
+    const normalizedCode =
+      roomCode
+        .trim()
+        .toUpperCase();
+
+    if (
+      normalizedCode.length !== 6
+    ) {
+      setClassroomMessage(
+        "Enter the six-character classroom room code."
+      );
+      return;
+    }
+
+    if (!studentName.trim()) {
+      setClassroomMessage(
+        "Enter the student name before joining the classroom."
+      );
+      return;
+    }
+
+    setClassroomBusy(true);
+    setClassroomMessage(
+      `Joining room ${normalizedCode}...`
+    );
+
+    try {
+      const joined =
+        await joinRoom(
+          normalizedCode,
+          studentName.trim(),
+          studentClass.trim()
+        );
+
+      setRoomId(
+        joined.room.id
+      );
+
+      setParticipantId(
+        joined.participant.id
+      );
+
+      setParticipantToken(
+        joined.participant
+          .participant_token
+      );
+
+      setInstructorToken(null);
+
+      setRoomCode(
+        normalizedCode
+      );
+
+      setClassroomRole(
+        "STUDENT"
+      );
+
+      setClassroomMessage(
+        `Connected to classroom ${normalizedCode}.`
+      );
+
+      const payload =
+        joined.room
+          .active_assignment as
+            | ClassroomAssignmentPayload
+            | null;
+
+      if (payload) {
+        setAppliedAssignment(
+          payload.assignment ?? null
+        );
+
+        setGradingSettings({
+          ...DEFAULT_GRADING_SETTINGS,
+          ...(payload.grading ?? {}),
+        });
+
+        setTimerMinutes(
+          payload.timerMinutes ?? 10
+        );
+
+        setTimerSecondsRemaining(
+          joined.room
+            .timer_seconds ??
+            (payload.timerMinutes ??
+              10) *
+              60
+        );
+
+        setAssignmentDetailsVisible(
+          Boolean(
+            payload.assignmentDetailsVisible
+          )
+        );
+
+        setAssignmentLocked(
+          Boolean(payload.locked)
+        );
+      }
+
+      sessionStorage.setItem(
+        "black-sky-student-room",
+        JSON.stringify({
+          roomId:
+            joined.room.id,
+          roomCode:
+            normalizedCode,
+          participantId:
+            joined.participant.id,
+          participantToken:
+            joined.participant
+              .participant_token,
+        })
+      );
+
+      const nextUrl =
+        new URL(
+          window.location.href
+        );
+
+      nextUrl.searchParams.set(
+        "room",
+        normalizedCode
+      );
+
+      window.history.replaceState(
+        {},
+        "",
+        nextUrl
+      );
+    } catch (error) {
+      setClassroomMessage(
+        error instanceof Error
+          ? error.message
+          : "Could not join classroom."
+      );
+    } finally {
+      setClassroomBusy(false);
+    }
+  }
+
+  async function leaveClassroomRoom() {
+    if (
+      participantId &&
+      participantToken
+    ) {
+      try {
+        await leaveRoom(
+          participantId,
+          participantToken
+        );
+      } catch {
+        // local disconnect still proceeds
+      }
+    }
+
+    setParticipantId(null);
+    setParticipantToken(null);
+    setInstructorToken(null);
+    setRoomId(null);
+    setClassroomRole("NONE");
+    setConnectedStudents([]);
+    setClassroomMessage(
+      "Disconnected from classroom."
+    );
+
+    sessionStorage.removeItem(
+      "black-sky-student-room"
+    );
+
+    sessionStorage.removeItem(
+      "black-sky-instructor-room"
+    );
+
+    const nextUrl =
+      new URL(
+        window.location.href
+      );
+
+    nextUrl.searchParams.delete(
+      "room"
+    );
+
+    window.history.replaceState(
+      {},
+      "",
+      nextUrl
+    );
+  }
+
+  async function closeClassroomRoom() {
+    if (
+      !roomId ||
+      !instructorToken ||
+      classroomRole !== "INSTRUCTOR"
+    ) {
+      return;
+    }
+
+    try {
+      await closeRoom(
+        roomId,
+        instructorToken
+      );
+
+      setClassroomMessage(
+        `Room ${roomCode} is closed.`
+      );
+    } catch (error) {
+      setClassroomMessage(
+        error instanceof Error
+          ? error.message
+          : "Could not close classroom."
+      );
+    }
+  }
+
+  async function copyStudentRoomLink() {
+    const url =
+      new URL(
+        window.location.href
+      );
+
+    url.searchParams.set(
+      "room",
+      roomCode
+    );
+
+    await navigator.clipboard.writeText(
+      url.toString()
+    );
+
+    setClassroomMessage(
+      "Student classroom link copied to clipboard."
+    );
+  }
 
   /* =======================================
      SOUND
@@ -2435,12 +3026,6 @@ function App() {
       !normalized.enforceMaxAttempts ||
       attempts.length <= normalized.maxAttempts;
 
-    const passed =
-      requirementMet &&
-      successCountMet &&
-      timeMet &&
-      attemptsMet;
-
     if (!timeMet) {
       return {
         passed: false,
@@ -2563,6 +3148,45 @@ function App() {
 
     studentAttemptsRef.current = nextAttempts;
     setStudentAttempts(nextAttempts);
+
+    if (
+      participantId &&
+      participantToken &&
+      classroomRole === "STUDENT"
+    ) {
+      void recordClassroomAttempt(
+        participantId,
+        participantToken,
+        {
+          attemptNumber:
+            nextRecord.attemptNumber,
+          success:
+            nextRecord.success,
+          failureElement:
+            nextRecord.failureElement,
+          accessStatus:
+            nextRecord.accessStatus,
+          details: {
+            timerDisplay:
+              nextRecord.timerDisplay,
+            timestamp:
+              nextRecord.timestamp,
+            sessionElapsedSeconds:
+              nextRecord.sessionElapsedSeconds,
+          },
+        },
+        {
+          frequency: result.frequency,
+          offset: result.offset,
+          shift: result.shift,
+          tone: result.tone,
+          accessStatus:
+            result.accessStatus,
+        }
+      ).catch(() => {
+        // Keep local training session running even if the room update fails.
+      });
+    }
 
     return nextRecord;
   }
@@ -2978,6 +3602,147 @@ function App() {
       </header>
 
       <section className="classroom-layout">
+
+        <section className="classroom-connection-panel">
+          <div className="classroom-connection-header">
+            <div>
+              <p className="panel-label">BLACK SKY LIVE CLASSROOM</p>
+              <h2>Student Join Room</h2>
+              <p>
+                Create a live instructor room or join an existing classroom from another device.
+              </p>
+            </div>
+
+            <div className={`classroom-live-badge ${classroomRole !== "NONE" ? "is-live" : ""}`}>
+              {classroomRole === "INSTRUCTOR"
+                ? `INSTRUCTOR • ${roomCode}`
+                : classroomRole === "STUDENT"
+                ? `STUDENT • ${roomCode}`
+                : "OFFLINE"}
+            </div>
+          </div>
+
+          {classroomRole === "NONE" ? (
+            <div className="classroom-entry-grid">
+              <div className="classroom-entry-card">
+                <span>INSTRUCTOR</span>
+                <strong>Create Training Room</strong>
+                <p>
+                  Open a six-character room and share the code or link with your students.
+                </p>
+                <button
+                  type="button"
+                  disabled={classroomBusy}
+                  onClick={createClassroomRoom}
+                >
+                  {classroomBusy ? "WORKING..." : "CREATE INSTRUCTOR ROOM"}
+                </button>
+              </div>
+
+              <div className="classroom-entry-card">
+                <span>STUDENT</span>
+                <strong>Join Classroom</strong>
+
+                <label>
+                  Student Name
+                  <input
+                    value={studentName}
+                    onChange={event => setStudentName(event.target.value)}
+                    placeholder="Student name"
+                  />
+                </label>
+
+                <label>
+                  Class / Cohort
+                  <input
+                    value={studentClass}
+                    onChange={event => setStudentClass(event.target.value)}
+                    placeholder="Class or cohort"
+                  />
+                </label>
+
+                <label>
+                  Room Code
+                  <input
+                    value={roomCode}
+                    maxLength={6}
+                    onChange={event =>
+                      setRoomCode(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))
+                    }
+                    placeholder="ABC123"
+                  />
+                </label>
+
+                <button
+                  type="button"
+                  disabled={classroomBusy}
+                  onClick={joinClassroomRoom}
+                >
+                  {classroomBusy ? "JOINING..." : "JOIN CLASSROOM"}
+                </button>
+              </div>
+            </div>
+          ) : classroomRole === "INSTRUCTOR" ? (
+            <div className="classroom-instructor-room">
+              <div className="classroom-room-code">
+                <span>ROOM CODE</span>
+                <strong>{roomCode}</strong>
+                <small>{connectedStudents.filter(student => student.connected).length} students connected</small>
+              </div>
+
+              <div className="classroom-room-actions">
+                <button type="button" onClick={copyStudentRoomLink}>
+                  COPY STUDENT LINK
+                </button>
+                <button type="button" onClick={closeClassroomRoom}>
+                  CLOSE ROOM
+                </button>
+                <button type="button" onClick={leaveClassroomRoom}>
+                  LEAVE ROOM
+                </button>
+              </div>
+
+              <div className="classroom-roster">
+                <div className="classroom-roster-header">
+                  <span>Student</span>
+                  <span>Class</span>
+                  <span>Attempts</span>
+                  <span>Status</span>
+                </div>
+
+                {connectedStudents.length === 0 ? (
+                  <div className="classroom-roster-empty">
+                    Waiting for students to join room {roomCode}.
+                  </div>
+                ) : (
+                  connectedStudents.map(student => (
+                    <div className="classroom-roster-row" key={student.id}>
+                      <strong>{student.student_name}</strong>
+                      <span>{student.class_name || "—"}</span>
+                      <span>{student.attempt_count}</span>
+                      <span>{student.connected ? student.session_status : "DISCONNECTED"}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="classroom-student-connected">
+              <div>
+                <span>CONNECTED TO ROOM</span>
+                <strong>{roomCode}</strong>
+                <small>{studentName || "Student"} • {studentClass || "No class entered"}</small>
+              </div>
+              <button type="button" onClick={leaveClassroomRoom}>
+                LEAVE CLASSROOM
+              </button>
+            </div>
+          )}
+
+          <div className="classroom-connection-message">
+            {classroomMessage}
+          </div>
+        </section>
 
         <section className="mission-zone">
           {/* ====================================
@@ -4072,6 +4837,7 @@ function App() {
 
         </aside>
 
+        {classroomRole !== "STUDENT" && (
         <section className={`instructor-console-shell compact-instructor-console ${
           instructorConsoleOpen
             ? "is-open"
@@ -4747,6 +5513,7 @@ function App() {
             </div>
           )}
         </section>
+        )}
 
         </div>
 
