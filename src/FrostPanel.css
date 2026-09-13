@@ -1,0 +1,445 @@
+/* =========================================================
+   BLACK SKY Fr.O.S.T PANEL
+   Simplified student-facing meter
+   Replace src/FrostPanel.css with this file.
+========================================================= */
+
+.frost-panel {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(94, 219, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(10, 18, 29, 0.98), rgba(4, 9, 18, 0.98)),
+    radial-gradient(circle at top right, rgba(94, 219, 255, 0.08), transparent 35%);
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 0 40px rgba(94, 219, 255, 0.04);
+}
+
+.frost-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.016) 0,
+      rgba(255, 255, 255, 0.016) 1px,
+      transparent 1px,
+      transparent 30px
+    );
+  opacity: 0.3;
+}
+
+.frost-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.frost-panel .panel-label {
+  color: #8fe7ff;
+  text-shadow: 0 0 10px rgba(94, 219, 255, 0.25);
+}
+
+.frost-panel-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-bottom: 8px;
+}
+
+.frost-panel-title .frost-dot {
+  opacity: 0.7;
+  padding: 0 1px;
+}
+
+.frost-title-fr,
+.frost-title-o,
+.frost-title-s,
+.frost-title-t {
+  font-weight: 900;
+  text-shadow: 0 0 12px currentColor;
+}
+
+.frost-title-fr,
+.frost-fr {
+  color: #5edbff;
+}
+
+.frost-title-o,
+.frost-o {
+  color: #ffd75a;
+}
+
+.frost-title-s,
+.frost-s {
+  color: #ff9d52;
+}
+
+.frost-title-t,
+.frost-t {
+  color: #72ef9d;
+}
+
+.frost-title-text {
+  margin-left: 7px;
+}
+
+.frost-panel .panel-description {
+  margin-bottom: 14px;
+  color: #aebfd3;
+  line-height: 1.5;
+}
+
+/* ========================================
+   ACCESS STATUS
+======================================== */
+
+.frost-panel .activity-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 16px;
+  align-items: center;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(94, 219, 255, 0.18);
+  background: linear-gradient(135deg, rgba(15, 26, 42, 0.96), rgba(6, 13, 24, 0.98));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.frost-panel .activity-card span {
+  color: #91a5ba;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.frost-panel .activity-card strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e7eef7;
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.frost-panel .access-granted-card {
+  border-color: rgba(114, 239, 157, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(114, 239, 157, 0.14),
+    0 0 28px rgba(114, 239, 157, 0.11);
+}
+
+.frost-panel .access-granted-card strong {
+  background: rgba(114, 239, 157, 0.13);
+  color: #72ef9d;
+}
+
+.frost-panel .access-denied-card {
+  border-color: rgba(255, 105, 105, 0.28);
+}
+
+.frost-panel .access-denied-card strong {
+  background: rgba(255, 105, 105, 0.12);
+  color: #ff8d8d;
+}
+
+/* ========================================
+   PRIMARY Fr.O.S.T CHECKS
+======================================== */
+
+.frost-primary-section {
+  margin-top: 4px;
+}
+
+.frost-primary-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 0 2px;
+}
+
+.frost-primary-heading span {
+  color: #d7e5f3;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+}
+
+.frost-primary-heading strong {
+  color: #73869b;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.frost-primary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.frost-primary-card {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 90px;
+  padding: 14px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(15, 24, 39, 0.98), rgba(7, 12, 22, 0.98));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+    0 8px 18px rgba(0, 0, 0, 0.22);
+}
+
+.frost-primary-fr { border-top: 3px solid #5edbff; }
+.frost-primary-o  { border-top: 3px solid #ffd75a; }
+.frost-primary-s  { border-top: 3px solid #ff9d52; }
+.frost-primary-t  { border-top: 3px solid #72ef9d; }
+
+.frost-primary-letter {
+  min-width: 52px;
+  font-size: 2.1rem;
+  line-height: 1;
+  font-weight: 1000;
+  letter-spacing: -0.04em;
+  text-shadow: 0 0 16px currentColor;
+}
+
+.frost-primary-copy {
+  min-width: 0;
+}
+
+.frost-primary-copy span {
+  display: block;
+  margin-bottom: 6px;
+  color: #97aabd;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.frost-primary-copy strong {
+  display: block;
+  color: #f4f8fb;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.frost-status-lamp {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #526173;
+  box-shadow: 0 0 0 4px rgba(82, 97, 115, 0.12);
+}
+
+.frost-primary-card.is-match {
+  border-color: rgba(114, 239, 157, 0.26);
+  background:
+    linear-gradient(180deg, rgba(13, 32, 29, 0.98), rgba(7, 16, 17, 0.98));
+}
+
+.frost-primary-card.is-match .frost-primary-copy strong {
+  color: #72ef9d;
+}
+
+.frost-primary-card.is-match .frost-status-lamp {
+  background: #72ef9d;
+  box-shadow:
+    0 0 0 4px rgba(114, 239, 157, 0.12),
+    0 0 16px rgba(114, 239, 157, 0.8);
+}
+
+.frost-primary-card.is-fail {
+  border-color: rgba(255, 105, 105, 0.2);
+}
+
+.frost-primary-card.is-fail .frost-primary-copy strong {
+  color: #ff8d8d;
+}
+
+.frost-primary-card.is-fail .frost-status-lamp {
+  background: #ff6969;
+  box-shadow:
+    0 0 0 4px rgba(255, 105, 105, 0.1),
+    0 0 14px rgba(255, 105, 105, 0.55);
+}
+
+.frost-primary-card.is-idle {
+  opacity: 0.72;
+}
+
+.frost-primary-card.is-idle .frost-primary-copy strong {
+  color: #8ea0b2;
+}
+
+/* ========================================
+   TECHNICAL DETAILS — SECONDARY
+======================================== */
+
+.frost-details {
+  margin-top: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  background: rgba(4, 9, 17, 0.68);
+  overflow: hidden;
+}
+
+.frost-details summary {
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  color: #a7b8ca;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.frost-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.frost-details summary::after {
+  content: "+";
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: rgba(94, 219, 255, 0.08);
+  color: #8fe7ff;
+  font-size: 1rem;
+}
+
+.frost-details[open] summary::after {
+  content: "−";
+}
+
+.frost-details[open] summary {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.frost-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+}
+
+.frost-details-grid > div {
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.frost-details-grid span {
+  display: block;
+  margin-bottom: 5px;
+  color: #72869b;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.frost-details-grid strong {
+  display: block;
+  color: #c9d5e1;
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.frost-panel .readout-tx {
+  color: #72ef9d;
+  text-shadow: 0 0 10px rgba(114, 239, 157, 0.75);
+}
+
+/* ========================================
+   COACHING MESSAGE
+======================================== */
+
+.frost-panel .next-step {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px 14px;
+  border-radius: 13px;
+  border: 1px solid rgba(94, 219, 255, 0.12);
+  border-left: 4px solid #5edbff;
+  background: linear-gradient(180deg, rgba(10, 18, 32, 0.96), rgba(5, 10, 20, 0.98));
+  color: #8fe7ff;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.frost-panel .next-step strong {
+  color: #e7eef7;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 1100px) {
+  .frost-primary-grid,
+  .frost-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .frost-panel .activity-card {
+    grid-template-columns: 1fr;
+  }
+
+  .frost-panel .activity-card strong {
+    justify-self: start;
+  }
+
+  .frost-primary-card {
+    min-height: 80px;
+  }
+
+  .frost-primary-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+}

@@ -1,0 +1,3405 @@
+/* =========================================================
+   BLACK SKY — INSTRUCTOR CONTROL v1
+   This file styles only the instructor-side assignment panel.
+   It does not alter radio geometry or radioStateMachine behavior.
+========================================================= */
+
+.right-control-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.instructor-control-panel {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(94, 219, 255, 0.18);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(8, 17, 29, 0.98), rgba(4, 9, 17, 0.98));
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    inset 0 0 38px rgba(94, 219, 255, 0.035);
+}
+
+.instructor-control-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.instructor-control-header h2 {
+  margin: 4px 0 0;
+}
+
+.instructor-control-panel .panel-label {
+  margin: 0;
+  color: #8fe7ff;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+}
+
+.lock-assignment-button,
+.apply-assignment-button,
+.clear-assignment-button,
+.details-toggle-button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  min-height: 40px;
+  padding: 0 13px;
+  background: linear-gradient(180deg, rgba(24, 37, 55, 0.98), rgba(10, 17, 29, 0.98));
+  color: #e7eef7;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.lock-assignment-button:hover,
+.apply-assignment-button:hover,
+.clear-assignment-button:hover,
+.details-toggle-button:hover {
+  border-color: rgba(94, 219, 255, 0.45);
+}
+
+.lock-assignment-button.is-locked {
+  color: #ffd75a;
+  border-color: rgba(255, 215, 90, 0.3);
+  box-shadow: 0 0 16px rgba(255, 215, 90, 0.08);
+}
+
+.instructor-control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.instructor-field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(13, 20, 33, 0.96), rgba(7, 12, 21, 0.96));
+}
+
+.instructor-field-wide {
+  grid-column: 1 / -1;
+}
+
+.instructor-field > span {
+  color: #8fa4b8;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.instructor-field input,
+.instructor-field select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  min-height: 41px;
+  border: 1px solid rgba(94, 219, 255, 0.15);
+  border-radius: 9px;
+  padding: 0 11px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.24);
+  color: #f4f8fb;
+  font: 800 0.92rem/1.2 "Courier New", monospace;
+}
+
+.instructor-field input:focus,
+.instructor-field select:focus {
+  border-color: rgba(94, 219, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(94, 219, 255, 0.08);
+}
+
+.instructor-field input:disabled,
+.instructor-field select:disabled,
+.instructor-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.instructor-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.apply-assignment-button {
+  color: #72ef9d;
+  border-color: rgba(114, 239, 157, 0.22);
+}
+
+.clear-assignment-button {
+  color: #ff8d8d;
+  border-color: rgba(255, 105, 105, 0.18);
+}
+
+.details-toggle-button {
+  color: #ffd75a;
+  border-color: rgba(255, 215, 90, 0.2);
+}
+
+.assignment-state {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 5px 12px;
+  align-items: center;
+  padding: 12px 13px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.assignment-state > span {
+  color: #8196aa;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.assignment-state > strong {
+  color: #e7eef7;
+  overflow-wrap: anywhere;
+}
+
+.assignment-state > small {
+  grid-column: 1 / -1;
+  color: #8fa4b8;
+}
+
+.assignment-active {
+  border-color: rgba(114, 239, 157, 0.18);
+}
+
+.assignment-active > strong {
+  color: #72ef9d;
+}
+
+.assignment-idle > strong {
+  color: #a8b6c5;
+}
+
+@media (max-width: 1100px) {
+  .instructor-control-grid,
+  .instructor-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .instructor-field-wide {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .instructor-control-header {
+    flex-direction: column;
+  }
+
+  .lock-assignment-button {
+    width: 100%;
+  }
+
+  .assignment-state {
+    grid-template-columns: 1fr;
+  }
+
+  .assignment-state > small {
+    grid-column: auto;
+  }
+}
+
+/* =========================================================
+   v1.1 — Scenario brief + student-facing assignment panel
+========================================================= */
+
+.scenario-name-field input {
+  min-height: 48px;
+  font-size: 1rem;
+}
+
+.instructor-field textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  min-height: 132px;
+  resize: vertical;
+  border: 1px solid rgba(94, 219, 255, 0.15);
+  border-radius: 9px;
+  padding: 11px 12px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.24);
+  color: #f4f8fb;
+  font: 700 0.9rem/1.5 system-ui, sans-serif;
+}
+
+.instructor-field textarea:focus {
+  border-color: rgba(94, 219, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(94, 219, 255, 0.08);
+}
+
+.instructor-field textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.student-assignment-panel {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(114, 239, 157, 0.18);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(8, 18, 24, 0.98), rgba(4, 10, 16, 0.98));
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    inset 0 0 38px rgba(114, 239, 157, 0.025);
+}
+
+.student-assignment-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.student-assignment-header .panel-label {
+  margin: 0;
+  color: #72ef9d;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+}
+
+.student-assignment-header h2 {
+  margin: 4px 0 0;
+}
+
+.student-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #aab8c6;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.student-mode-repeater {
+  color: #5edbff;
+  border-color: rgba(94, 219, 255, 0.25);
+  background: rgba(94, 219, 255, 0.07);
+}
+
+.student-mode-simplex {
+  color: #72ef9d;
+  border-color: rgba(114, 239, 157, 0.25);
+  background: rgba(114, 239, 157, 0.07);
+}
+
+.student-assignment-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 18px;
+  border-radius: 13px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.student-assignment-empty strong {
+  color: #ffd75a;
+}
+
+.student-assignment-empty span {
+  color: #8fa4b8;
+}
+
+.student-scenario-card {
+  padding: 15px 16px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(114, 239, 157, 0.14);
+  border-left: 4px solid #72ef9d;
+  background: linear-gradient(180deg, rgba(12, 25, 29, 0.96), rgba(6, 14, 18, 0.96));
+}
+
+.student-scenario-card > span {
+  display: block;
+  margin-bottom: 5px;
+  color: #72ef9d;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.student-scenario-card > strong {
+  display: block;
+  color: #f2f7fb;
+  font-size: 1rem;
+}
+
+.student-scenario-card p {
+  margin: 9px 0 0;
+  color: #c4d0dc;
+  font-size: 0.86rem;
+  line-height: 1.58;
+  white-space: pre-wrap;
+}
+
+.student-assignment-readout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px 10px;
+}
+
+.student-assignment-readout > div {
+  min-width: 0;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(12, 20, 29, 0.96), rgba(6, 11, 17, 0.96));
+}
+
+.student-assignment-readout span {
+  display: block;
+  margin-bottom: 7px;
+  color: #8498ac;
+  font-size: 0.67rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.student-assignment-readout strong {
+  color: #eef5f8;
+  font-family: "Courier New", monospace;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.student-assignment-full {
+  grid-column: 1 / -1;
+}
+
+.student-task-strip {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px 14px;
+  align-items: center;
+  padding: 12px 13px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 90, 0.14);
+  background: rgba(255, 215, 90, 0.045);
+}
+
+.student-task-strip span {
+  color: #ffd75a;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.student-task-strip strong {
+  color: #e7eef7;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 1100px) {
+  .student-assignment-readout {
+    grid-template-columns: 1fr;
+  }
+
+  .student-assignment-full {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .student-assignment-header {
+    flex-direction: column;
+  }
+
+  .student-task-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   v1.2 — THREE-PANEL CLASSROOM LAYOUT
+
+   Visual flow:
+   1. Mission Brief — full width
+   2. Virtual HT + Fr.O.S.T meter — working area
+   3. Collapsible Instructor Control — full width below
+========================================================= */
+
+.classroom-layout {
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ---------- PANEL 1: MISSION BRIEF ---------- */
+
+.mission-zone {
+  width: 100%;
+  min-width: 0;
+}
+
+.mission-zone .student-assignment-panel {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 18px 20px;
+  border-color: rgba(114, 239, 157, 0.22);
+  background:
+    linear-gradient(100deg, rgba(8, 20, 25, 0.99), rgba(5, 12, 20, 0.99));
+}
+
+.mission-zone .student-assignment-header {
+  margin-bottom: 12px;
+}
+
+.mission-zone .student-assignment-header h2 {
+  font-size: 1.35rem;
+  letter-spacing: 0.01em;
+}
+
+/* Put scenario narrative and assignment readout next to each other
+   when space allows, while keeping the flow readable. */
+.mission-zone .student-scenario-card {
+  margin-bottom: 12px;
+  padding: 16px 18px;
+}
+
+.mission-zone .student-scenario-card > strong {
+  font-size: 1.08rem;
+}
+
+.mission-zone .student-scenario-card p {
+  max-width: 1180px;
+  font-size: 0.91rem;
+  line-height: 1.6;
+}
+
+.mission-zone .student-assignment-readout {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.mission-zone .student-assignment-full {
+  grid-column: auto;
+}
+
+.mission-zone .student-task-strip {
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 11px 14px;
+}
+
+/* ---------- PANEL 2: RADIO + Fr.O.S.T ---------- */
+
+.classroom-workspace.simulator-layout {
+  width: 100%;
+  min-width: 0;
+  display: grid !important;
+  grid-template-columns: minmax(520px, 0.92fr) minmax(470px, 1.08fr) !important;
+  gap: 20px !important;
+  align-items: start;
+  box-sizing: border-box;
+}
+
+.classroom-workspace > .radio-stage,
+.classroom-workspace > .frost-panel {
+  min-width: 0;
+}
+
+/* The radio is the hands-on workspace. */
+.classroom-workspace > .radio-stage {
+  justify-self: center;
+  width: 100%;
+}
+
+/* The Fr.O.S.T meter visually belongs to the radio like test equipment. */
+.classroom-workspace > .frost-panel {
+  width: 100%;
+  box-sizing: border-box;
+  align-self: start;
+}
+
+/* ---------- PANEL 3: COLLAPSIBLE INSTRUCTOR CONSOLE ---------- */
+
+.instructor-console-shell {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid rgba(94, 219, 255, 0.16);
+  border-radius: 16px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(7, 14, 25, 0.99), rgba(3, 8, 15, 0.99));
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.23),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.instructor-console-shell.is-collapsed {
+  border-color: rgba(255, 215, 90, 0.16);
+}
+
+.instructor-console-toggle {
+  width: 100%;
+  min-height: 60px;
+  border: 0;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background:
+    linear-gradient(90deg, rgba(12, 26, 41, 0.98), rgba(7, 14, 25, 0.98));
+  color: #eef7fb;
+  cursor: pointer;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.instructor-console-toggle:hover {
+  background:
+    linear-gradient(90deg, rgba(15, 34, 52, 0.99), rgba(9, 18, 31, 0.99));
+}
+
+.instructor-console-toggle:focus-visible {
+  outline: 2px solid rgba(94, 219, 255, 0.75);
+  outline-offset: -2px;
+}
+
+.instructor-console-toggle-left {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.instructor-console-toggle-left b {
+  color: #8fe7ff;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+}
+
+.instructor-console-toggle-left small {
+  max-width: 100%;
+  color: #9eb0c1;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.instructor-console-shell.is-collapsed .instructor-console-toggle-left b {
+  color: #ffd75a;
+}
+
+.instructor-console-toggle-action {
+  flex: 0 0 auto;
+  min-width: 142px;
+  padding: 8px 11px;
+  border: 1px solid rgba(94, 219, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(94, 219, 255, 0.05);
+  color: #bcefff;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-align: center;
+}
+
+.instructor-console-shell.is-collapsed .instructor-console-toggle-action {
+  color: #ffd75a;
+  border-color: rgba(255, 215, 90, 0.2);
+  background: rgba(255, 215, 90, 0.045);
+}
+
+.instructor-console-body {
+  padding: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.instructor-console-body .instructor-control-panel {
+  margin: 0;
+  box-shadow: none;
+}
+
+/* On a wide desktop, make the instructor form use more horizontal
+   space because it now owns the entire bottom row. */
+.instructor-console-body .instructor-control-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.instructor-console-body .scenario-name-field,
+.instructor-console-body .scenario-details-field,
+.instructor-console-body .instructor-field-wide {
+  grid-column: 1 / -1;
+}
+
+.instructor-console-body .instructor-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 1040px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 1380px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(480px, 0.95fr) minmax(420px, 1.05fr) !important;
+    gap: 16px !important;
+  }
+
+  .mission-zone .student-assignment-readout {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .instructor-console-body .instructor-control-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .classroom-workspace > .radio-stage,
+  .classroom-workspace > .frost-panel {
+    width: 100%;
+  }
+
+  .mission-zone .student-assignment-readout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mission-zone .student-assignment-full {
+    grid-column: 1 / -1;
+  }
+
+  .instructor-console-body .instructor-control-grid,
+  .instructor-console-body .instructor-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .instructor-console-body .instructor-field-wide,
+  .instructor-console-body .scenario-name-field,
+  .instructor-console-body .scenario-details-field {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .classroom-layout {
+    gap: 12px;
+  }
+
+  .mission-zone .student-assignment-panel {
+    padding: 14px;
+  }
+
+  .mission-zone .student-assignment-readout {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-zone .student-assignment-full {
+    grid-column: auto;
+  }
+
+  .mission-zone .student-task-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .instructor-console-toggle {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .instructor-console-toggle-action {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* =========================================================
+   v1.3 — MISSION HIERARCHY + INSTRUCTOR COMMAND BAR
+   These rules refine visual priority without changing radio
+   or Fr.O.S.T behavior.
+========================================================= */
+
+/* ---------- Mission brief hierarchy ---------- */
+
+.mission-zone .mission-brief-panel {
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(114, 239, 157, 0.2);
+  border-radius: 18px;
+  background:
+    linear-gradient(120deg, rgba(8, 21, 25, 0.99), rgba(5, 12, 20, 0.99));
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018);
+}
+
+.mission-zone .mission-brief-header {
+  margin: 0;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  background:
+    linear-gradient(90deg, rgba(11, 31, 34, 0.97), rgba(8, 18, 29, 0.97));
+}
+
+.mission-heading-block {
+  min-width: 0;
+}
+
+.mission-heading-block .panel-label {
+  margin-bottom: 6px;
+  color: #72ef9d;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
+
+.mission-title-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.mission-kicker {
+  color: #8fe7ff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.mission-zone .mission-title-row h2 {
+  margin: 0;
+  color: #f5fbff;
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+.mission-status-cluster {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mission-detail-badge,
+.student-mode-waiting {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+
+.student-mode-waiting {
+  color: #b8c6d3;
+  border: 1px solid rgba(184, 198, 211, 0.18);
+  background: rgba(184, 198, 211, 0.06);
+}
+
+.mission-detail-badge.details-hidden {
+  color: #ffd75a;
+  border: 1px solid rgba(255, 215, 90, 0.24);
+  background: rgba(255, 215, 90, 0.07);
+}
+
+.mission-detail-badge.details-revealed {
+  color: #72ef9d;
+  border: 1px solid rgba(114, 239, 157, 0.24);
+  background: rgba(114, 239, 157, 0.07);
+}
+
+.mission-waiting-state {
+  margin: 18px 20px 20px;
+}
+
+.mission-narrative-grid {
+  padding: 18px 20px 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.65fr);
+  gap: 14px;
+}
+
+.mission-zone .mission-situation-card,
+.mission-zone .mission-task-card {
+  margin: 0;
+  min-width: 0;
+  border-radius: 14px;
+}
+
+.mission-zone .mission-situation-card {
+  padding: 16px 18px;
+  border: 1px solid rgba(94, 219, 255, 0.12);
+  background: linear-gradient(180deg, rgba(8, 18, 29, 0.93), rgba(5, 11, 19, 0.95));
+}
+
+.mission-zone .mission-situation-card > span,
+.mission-zone .mission-task-card > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #8fe7ff;
+  font-size: 0.69rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.mission-zone .mission-situation-card p {
+  margin: 0;
+  max-width: none;
+  color: #d9e4ed;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.mission-zone .mission-task-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 18px;
+  border: 1px solid rgba(114, 239, 157, 0.16);
+  border-left: 4px solid #72ef9d;
+  background:
+    linear-gradient(180deg, rgba(10, 27, 24, 0.92), rgba(6, 15, 17, 0.95));
+}
+
+.mission-zone .mission-task-card > span {
+  color: #72ef9d;
+}
+
+.mission-zone .mission-task-card strong {
+  color: #f0f7f3;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.mission-channel-heading {
+  margin: 0 20px 10px;
+  padding-top: 2px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.mission-channel-heading > span {
+  color: #9fb3c6;
+  font-size: 0.69rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.mission-channel-heading > small {
+  color: #718398;
+  font-size: 0.72rem;
+  text-align: right;
+}
+
+.mission-zone .student-assignment-readout {
+  margin: 0 20px 18px;
+}
+
+/* ---------- Improved instructor command bar ---------- */
+
+.instructor-console-toggle {
+  min-height: 72px;
+  padding: 11px 14px 11px 18px;
+  display: grid;
+  grid-template-columns: minmax(240px, 1.25fr) auto auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.instructor-console-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.instructor-console-title-row b {
+  color: #8fe7ff;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+}
+
+.instructor-console-title-row em {
+  color: #8297aa;
+  font-style: normal;
+  font-size: 0.63rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.console-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.console-live-dot.is-live {
+  color: #72ef9d;
+  background: #72ef9d;
+}
+
+.console-live-dot.is-idle {
+  color: #697c8e;
+  background: #697c8e;
+}
+
+.instructor-console-toggle-left small {
+  margin-top: 3px;
+  color: #b7c5d2;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.instructor-console-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.console-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  color: #aebdca;
+  font-size: 0.61rem;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  white-space: nowrap;
+}
+
+.console-chip.chip-locked {
+  color: #ffd75a;
+  border-color: rgba(255, 215, 90, 0.22);
+  background: rgba(255, 215, 90, 0.065);
+}
+
+.console-chip.chip-unlocked {
+  color: #8fe7ff;
+  border-color: rgba(94, 219, 255, 0.18);
+  background: rgba(94, 219, 255, 0.055);
+}
+
+.console-chip.chip-hidden {
+  color: #ffbd72;
+  border-color: rgba(255, 157, 82, 0.2);
+  background: rgba(255, 157, 82, 0.055);
+}
+
+.console-chip.chip-revealed {
+  color: #72ef9d;
+  border-color: rgba(114, 239, 157, 0.2);
+  background: rgba(114, 239, 157, 0.055);
+}
+
+.console-chip.chip-mode {
+  color: #d7e4ef;
+}
+
+.instructor-console-toggle-action {
+  min-width: 150px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 12px;
+}
+
+.console-chevron {
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.instructor-console-shell.is-collapsed .instructor-console-toggle {
+  background:
+    linear-gradient(90deg, rgba(22, 25, 24, 0.98), rgba(10, 17, 25, 0.99));
+}
+
+@media (max-width: 1100px) {
+  .mission-narrative-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .instructor-console-toggle {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .instructor-console-summary {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .mission-zone .mission-brief-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mission-status-cluster {
+    justify-content: flex-start;
+  }
+
+  .mission-narrative-grid {
+    padding: 14px;
+  }
+
+  .mission-channel-heading {
+    margin: 0 14px 10px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mission-channel-heading > small {
+    text-align: left;
+  }
+
+  .mission-zone .student-assignment-readout {
+    margin: 0 14px 14px;
+  }
+
+  .instructor-console-toggle {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .instructor-console-summary {
+    justify-content: flex-start;
+  }
+}
+
+/* =========================================================
+   v1.4 — COMPACT RIGHT-SIDE INSTRUCTOR CONSOLE
+
+   Classroom flow:
+   - Mission Brief across the top
+   - Radio on the left
+   - Fr.O.S.T meter + compact instructor console stacked on right
+========================================================= */
+
+.classroom-workspace.simulator-layout {
+  grid-template-columns: minmax(520px, 0.98fr) minmax(430px, 1.02fr) !important;
+  gap: 20px !important;
+}
+
+.classroom-workspace > .classroom-right-stack {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-self: start;
+}
+
+.classroom-right-stack > .frost-panel,
+.classroom-right-stack > .instructor-console-shell {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* The instructor console now behaves like a compact utility panel
+   under the Fr.O.S.T meter instead of a full-width third row. */
+.classroom-right-stack .compact-instructor-console {
+  border-radius: 14px;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018);
+}
+
+.classroom-right-stack .instructor-console-toggle {
+  min-height: 56px;
+  padding: 9px 11px 9px 13px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "identity action"
+    "summary summary";
+  gap: 7px 10px;
+}
+
+.classroom-right-stack .instructor-console-toggle-left {
+  grid-area: identity;
+}
+
+.classroom-right-stack .instructor-console-title-row b {
+  font-size: 0.69rem;
+}
+
+.classroom-right-stack .instructor-console-title-row em {
+  font-size: 0.56rem;
+}
+
+.classroom-right-stack .instructor-console-toggle-left small {
+  display: block;
+  max-width: 38ch;
+  margin-top: 2px;
+  font-size: 0.69rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.classroom-right-stack .instructor-console-summary {
+  grid-area: summary;
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+.classroom-right-stack .console-chip {
+  min-height: 23px;
+  padding: 0 7px;
+  font-size: 0.54rem;
+}
+
+.classroom-right-stack .instructor-console-toggle-action {
+  grid-area: action;
+  min-width: 112px;
+  min-height: 34px;
+  padding: 0 9px;
+  font-size: 0.6rem;
+}
+
+.classroom-right-stack .instructor-console-body {
+  padding: 9px;
+}
+
+.classroom-right-stack .instructor-control-panel {
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.classroom-right-stack .instructor-control-header {
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.classroom-right-stack .instructor-control-header h2 {
+  margin-top: 2px;
+  font-size: 1rem;
+}
+
+.classroom-right-stack .instructor-control-panel .panel-label {
+  font-size: 0.6rem;
+}
+
+.classroom-right-stack .lock-assignment-button {
+  min-height: 34px;
+  padding: 0 9px;
+  font-size: 0.64rem;
+}
+
+.classroom-right-stack .instructor-control-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.classroom-right-stack .instructor-field {
+  gap: 5px;
+  padding: 8px;
+  border-radius: 9px;
+}
+
+.classroom-right-stack .instructor-field-wide,
+.classroom-right-stack .scenario-name-field,
+.classroom-right-stack .scenario-details-field {
+  grid-column: 1 / -1;
+}
+
+.classroom-right-stack .instructor-field > span {
+  font-size: 0.58rem;
+}
+
+.classroom-right-stack .instructor-field input,
+.classroom-right-stack .instructor-field select {
+  min-height: 34px;
+  padding: 0 8px;
+  font-size: 0.78rem;
+}
+
+.classroom-right-stack .scenario-name-field input {
+  min-height: 36px;
+  font-size: 0.8rem;
+}
+
+.classroom-right-stack .scenario-details-field textarea {
+  min-height: 78px;
+  max-height: 150px;
+  padding: 8px 9px;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.classroom-right-stack .instructor-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+  max-width: none;
+}
+
+.classroom-right-stack .instructor-actions button {
+  min-height: 35px;
+  padding: 5px 7px;
+  font-size: 0.57rem;
+  line-height: 1.2;
+}
+
+.classroom-right-stack .assignment-state {
+  margin-top: 8px;
+  padding: 9px 10px;
+  gap: 4px 8px;
+}
+
+.classroom-right-stack .assignment-state > span {
+  font-size: 0.56rem;
+}
+
+.classroom-right-stack .assignment-state > strong {
+  font-size: 0.74rem;
+}
+
+.classroom-right-stack .assignment-state > small {
+  font-size: 0.64rem;
+}
+
+@media (max-width: 1380px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(480px, 0.98fr) minmax(400px, 1.02fr) !important;
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    width: 100%;
+  }
+
+  .classroom-right-stack .instructor-control-grid,
+  .classroom-right-stack .instructor-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .classroom-right-stack .instructor-field-wide,
+  .classroom-right-stack .scenario-name-field,
+  .classroom-right-stack .scenario-details-field {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .classroom-right-stack .instructor-console-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .classroom-right-stack .instructor-console-toggle-left small {
+    white-space: normal;
+  }
+
+  .classroom-right-stack .instructor-console-toggle-action {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   RIGHT-SIDE DUAL PANEL LAYOUT
+   Fr.O.S.T meter + compact instructor console side by side
+========================================================= */
+
+.classroom-workspace.simulator-layout {
+  grid-template-columns: minmax(500px, 0.92fr) minmax(760px, 1.08fr) !important;
+  gap: 20px !important;
+  align-items: start !important;
+}
+
+.classroom-workspace > .classroom-right-stack {
+  min-width: 0;
+  width: 100%;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.classroom-right-stack > .frost-panel,
+.classroom-right-stack > .instructor-console-shell {
+  width: 100%;
+  min-width: 0;
+  align-self: start;
+}
+
+.classroom-right-stack > .frost-panel {
+  margin: 0;
+}
+
+.classroom-right-stack > .instructor-console-shell {
+  margin: 0;
+}
+
+/* Keep the instructor console compact enough to sit comfortably
+   beside the Fr.O.S.T panel. */
+.classroom-right-stack .compact-instructor-console {
+  min-height: 0;
+}
+
+.classroom-right-stack .instructor-console-toggle {
+  min-height: 54px;
+  padding: 8px 10px 8px 12px;
+}
+
+.classroom-right-stack .instructor-console-title-row b {
+  font-size: 0.66rem;
+}
+
+.classroom-right-stack .instructor-console-title-row em {
+  font-size: 0.54rem;
+}
+
+.classroom-right-stack .instructor-console-toggle-left small {
+  max-width: 28ch;
+  font-size: 0.66rem;
+}
+
+.classroom-right-stack .instructor-console-summary {
+  gap: 4px;
+}
+
+.classroom-right-stack .console-chip {
+  min-height: 22px;
+  padding: 0 6px;
+  font-size: 0.51rem;
+}
+
+.classroom-right-stack .instructor-console-toggle-action {
+  min-width: 104px;
+  min-height: 32px;
+  font-size: 0.58rem;
+}
+
+.classroom-right-stack .instructor-console-body {
+  padding: 8px;
+}
+
+.classroom-right-stack .instructor-control-panel {
+  padding: 11px;
+}
+
+.classroom-right-stack .instructor-control-header h2 {
+  font-size: 0.95rem;
+}
+
+.classroom-right-stack .lock-assignment-button {
+  min-height: 32px;
+  padding: 0 8px;
+  font-size: 0.61rem;
+}
+
+.classroom-right-stack .instructor-control-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.classroom-right-stack .instructor-field {
+  padding: 7px;
+  gap: 4px;
+}
+
+.classroom-right-stack .instructor-field > span {
+  font-size: 0.56rem;
+}
+
+.classroom-right-stack .instructor-field input,
+.classroom-right-stack .instructor-field select {
+  min-height: 32px;
+  padding: 0 7px;
+  font-size: 0.74rem;
+}
+
+.classroom-right-stack .scenario-name-field input {
+  min-height: 34px;
+  font-size: 0.78rem;
+}
+
+.classroom-right-stack .scenario-details-field textarea {
+  min-height: 66px;
+  max-height: 120px;
+  padding: 7px 8px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.classroom-right-stack .instructor-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.classroom-right-stack .instructor-actions button {
+  min-height: 33px;
+  padding: 5px 6px;
+  font-size: 0.55rem;
+}
+
+.classroom-right-stack .assignment-state {
+  margin-top: 7px;
+  padding: 8px 9px;
+}
+
+.classroom-right-stack .assignment-state > span {
+  font-size: 0.54rem;
+}
+
+.classroom-right-stack .assignment-state > strong {
+  font-size: 0.71rem;
+}
+
+.classroom-right-stack .assignment-state > small {
+  font-size: 0.62rem;
+}
+
+/* Give the Fr.O.S.T panel the same top alignment and a little more
+   breathing room inside this side-by-side station. */
+.classroom-right-stack .frost-panel {
+  min-height: 100%;
+}
+
+@media (max-width: 1500px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(470px, 0.96fr) minmax(680px, 1.04fr) !important;
+  }
+}
+
+@media (max-width: 1320px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(460px, 0.98fr) minmax(620px, 1.02fr) !important;
+    gap: 16px !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .classroom-right-stack .instructor-control-grid,
+  .classroom-right-stack .instructor-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .classroom-right-stack .instructor-field-wide,
+  .classroom-right-stack .scenario-name-field,
+  .classroom-right-stack .scenario-details-field {
+    grid-column: auto;
+  }
+}
+
+/* =========================================================
+   TIGHTER WORKSPACE + WIDER INSTRUCTOR CONSOLE
+   - Pulls the right-side station closer to the radio
+   - Gives Instructor Control more width than Fr.O.S.T
+========================================================= */
+
+.classroom-workspace.simulator-layout {
+  grid-template-columns: minmax(500px, 0.94fr) minmax(780px, 1.06fr) !important;
+  column-gap: 8px !important;
+  row-gap: 14px !important;
+}
+
+.classroom-workspace > .classroom-right-stack {
+  grid-template-columns: minmax(300px, 0.78fr) minmax(430px, 1.22fr) !important;
+  gap: 10px !important;
+}
+
+.classroom-right-stack > .frost-panel,
+.classroom-right-stack > .instructor-console-shell {
+  margin: 0 !important;
+}
+
+/* Let the instructor side breathe more horizontally. */
+.classroom-right-stack .instructor-console-body {
+  padding: 9px 10px;
+}
+
+.classroom-right-stack .instructor-control-panel {
+  padding: 12px 13px;
+}
+
+.classroom-right-stack .scenario-details-field textarea {
+  min-height: 74px;
+}
+
+/* Slightly tighter radio-side spacing at common desktop widths. */
+@media (max-width: 1550px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(470px, 0.96fr) minmax(720px, 1.04fr) !important;
+    column-gap: 7px !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(285px, 0.8fr) minmax(390px, 1.2fr) !important;
+    gap: 9px !important;
+  }
+}
+
+@media (max-width: 1380px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(450px, 0.98fr) minmax(650px, 1.02fr) !important;
+    column-gap: 6px !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(260px, 0.84fr) minmax(350px, 1.16fr) !important;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 1240px) {
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: 1fr !important;
+    column-gap: 0 !important;
+  }
+}
+
+/* =========================================================
+   FINAL WIDTH TUNING
+   Keep Fr.O.S.T at its comfortable original side-by-side width,
+   pull both panels closer to the radio, and give Instructor Control
+   extra width by expanding the right-side station rather than
+   shrinking the Fr.O.S.T meter.
+========================================================= */
+
+.classroom-workspace.simulator-layout {
+  grid-template-columns: minmax(500px, 0.88fr) minmax(860px, 1.12fr) !important;
+  column-gap: 6px !important;
+  row-gap: 14px !important;
+  align-items: start !important;
+}
+
+.classroom-workspace > .classroom-right-stack {
+  grid-template-columns: minmax(380px, 0.92fr) minmax(460px, 1.08fr) !important;
+  gap: 9px !important;
+  align-items: start;
+}
+
+/* Preserve the Fr.O.S.T meter's comfortable width. */
+.classroom-right-stack > .frost-panel {
+  min-width: 380px !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Instructor console gets the extra horizontal room. */
+.classroom-right-stack > .instructor-console-shell {
+  min-width: 460px !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 1600px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(470px, 0.9fr) minmax(800px, 1.1fr) !important;
+    column-gap: 6px !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(360px, 0.92fr) minmax(420px, 1.08fr) !important;
+    gap: 8px !important;
+  }
+
+  .classroom-right-stack > .frost-panel {
+    min-width: 360px !important;
+  }
+
+  .classroom-right-stack > .instructor-console-shell {
+    min-width: 420px !important;
+  }
+}
+
+@media (max-width: 1420px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(450px, 0.92fr) minmax(740px, 1.08fr) !important;
+    column-gap: 5px !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(340px, 0.94fr) minmax(380px, 1.06fr) !important;
+    gap: 8px !important;
+  }
+
+  .classroom-right-stack > .frost-panel {
+    min-width: 340px !important;
+  }
+
+  .classroom-right-stack > .instructor-console-shell {
+    min-width: 380px !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(340px, 0.95fr) minmax(380px, 1.05fr) !important;
+    gap: 10px !important;
+  }
+
+  .classroom-right-stack > .frost-panel,
+  .classroom-right-stack > .instructor-console-shell {
+    min-width: 0 !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* =========================================================
+   INSTRUCTOR TOOLS v2
+   Saved scenarios + assignment countdown timer
+========================================================= */
+
+.instructor-tools-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.65fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.saved-scenarios-tool,
+.assignment-timer-tool {
+  min-width: 0;
+  padding: 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(94, 219, 255, 0.12);
+  background: linear-gradient(180deg, rgba(10, 18, 30, 0.94), rgba(5, 10, 18, 0.97));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+}
+
+.instructor-tool-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.instructor-tool-heading > span {
+  color: #8fa5b9;
+  font-size: 0.55rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+}
+
+.instructor-tool-heading > strong {
+  color: #eaf7ff;
+  font-size: 0.75rem;
+  font-family: "Courier New", monospace;
+}
+
+.saved-scenario-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 5px;
+}
+
+.saved-scenario-controls select,
+.saved-scenario-controls button,
+.timer-controls input,
+.timer-controls button {
+  min-width: 0;
+  min-height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(113, 151, 181, 0.22);
+  background: rgba(7, 14, 24, 0.96);
+  color: #dceaf4;
+  box-sizing: border-box;
+}
+
+.saved-scenario-controls select {
+  width: 100%;
+  padding: 0 8px;
+  font-size: 0.68rem;
+}
+
+.saved-scenario-controls button,
+.timer-controls button {
+  padding: 0 8px;
+  cursor: pointer;
+  font-size: 0.53rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.saved-scenario-controls button:hover:not(:disabled),
+.timer-controls button:hover:not(:disabled) {
+  border-color: rgba(94, 219, 255, 0.5);
+  background: rgba(20, 42, 60, 0.95);
+}
+
+.saved-scenario-controls button:disabled,
+.timer-controls input:disabled,
+.timer-controls button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.timer-controls {
+  display: grid;
+  grid-template-columns: minmax(74px, 0.8fr) auto auto;
+  gap: 5px;
+  align-items: end;
+}
+
+.timer-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.timer-controls label > span {
+  color: #7f94a9;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.timer-controls input {
+  width: 100%;
+  padding: 0 7px;
+  font-size: 0.7rem;
+  font-family: "Courier New", monospace;
+}
+
+.timer-expired,
+.console-chip.chip-timer.is-expired {
+  color: #ff7d7d !important;
+  border-color: rgba(255, 105, 105, 0.35) !important;
+  text-shadow: 0 0 9px rgba(255, 105, 105, 0.25);
+}
+
+.console-chip.chip-timer {
+  color: #bfeeff;
+  font-family: "Courier New", monospace;
+}
+
+.console-chip.chip-timer.is-running {
+  color: #72ef9d;
+  border-color: rgba(114, 239, 157, 0.32);
+  box-shadow: inset 0 0 12px rgba(114, 239, 157, 0.06);
+}
+
+@media (max-width: 1500px) {
+  .instructor-tools-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  .saved-scenario-controls,
+  .timer-controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   STUDENT PTT ATTEMPT TRACKING
+========================================================= */
+.student-attempt-tool {
+  margin-top: 9px;
+  padding: 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(94, 219, 255, 0.14);
+  background: linear-gradient(180deg, rgba(10, 18, 30, 0.96), rgba(5, 10, 18, 0.98));
+}
+.student-attempt-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+.student-attempt-heading > div:first-child { display:flex; flex-direction:column; gap:2px; }
+.student-attempt-heading span { color:#8fa5b9; font-size:.53rem; font-weight:900; letter-spacing:.1em; }
+.student-attempt-heading strong { color:#eaf7ff; font-size:.72rem; }
+.student-attempt-summary { display:flex; align-items:center; gap:5px; }
+.student-attempt-summary > span { display:inline-flex; align-items:center; justify-content:center; min-height:25px; padding:0 7px; border-radius:999px; border:1px solid rgba(255,255,255,.08); font-family:"Courier New", monospace; font-size:.61rem; letter-spacing:0; }
+.attempt-summary-success { color:#72ef9d !important; background:rgba(114,239,157,.07); border-color:rgba(114,239,157,.2) !important; }
+.attempt-summary-fail { color:#ff8d8d !important; background:rgba(255,105,105,.07); border-color:rgba(255,105,105,.2) !important; }
+.student-attempt-summary button { min-height:26px; padding:0 7px; border-radius:7px; border:1px solid rgba(113,151,181,.2); background:rgba(8,15,25,.96); color:#a9bac9; cursor:pointer; font-size:.5rem; font-weight:900; }
+.student-attempt-summary button:disabled { opacity:.4; cursor:not-allowed; }
+.student-attempt-empty { padding:10px; border-radius:8px; border:1px dashed rgba(113,151,181,.16); color:#758a9e; font-size:.64rem; line-height:1.4; }
+.student-attempt-history { display:flex; flex-direction:column; gap:5px; max-height:180px; overflow-y:auto; padding-right:2px; }
+.student-attempt-row { display:grid; grid-template-columns:32px minmax(92px,1fr) minmax(100px,1.2fr) auto auto; align-items:center; gap:6px; min-width:0; padding:7px 8px; border-radius:8px; border:1px solid rgba(255,255,255,.055); background:rgba(4,9,17,.7); }
+.student-attempt-row.attempt-success { border-left:3px solid #72ef9d; }
+.student-attempt-row.attempt-fail { border-left:3px solid #ff6969; }
+.attempt-number { color:#8ea4b8; font-family:"Courier New", monospace; font-size:.6rem; font-weight:900; }
+.attempt-result { color:#e7eef7; font-size:.6rem; font-weight:900; }
+.attempt-success .attempt-result { color:#72ef9d; }
+.attempt-fail .attempt-result { color:#ff8d8d; }
+.attempt-status { color:#8fa5b9; font-size:.54rem; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.attempt-time,.attempt-timer { color:#70869a; font-family:"Courier New", monospace; font-size:.52rem; white-space:nowrap; }
+@media (max-width:1450px) {
+  .student-attempt-row { grid-template-columns:30px minmax(90px,1fr) auto; }
+  .attempt-status { grid-column:2 / -1; white-space:normal; }
+}
+@media (max-width:900px) {
+  .student-attempt-heading { align-items:flex-start; flex-direction:column; }
+  .student-attempt-row { grid-template-columns:30px minmax(0,1fr) auto; }
+  .attempt-timer { display:none; }
+}
+
+
+/* =========================================================
+   VISIBILITY / WIDTH TUNING
+   Preserve Fr.O.S.T width, widen Instructor Console, enlarge
+   instructor-side typography for easier classroom viewing.
+========================================================= */
+
+/* Pull the whole control station close to the radio while giving
+   the instructor side more total horizontal room. */
+.classroom-workspace.simulator-layout {
+  grid-template-columns: minmax(500px, 0.82fr) minmax(980px, 1.18fr) !important;
+  column-gap: 6px !important;
+  row-gap: 14px !important;
+  align-items: start !important;
+}
+
+/* Fr.O.S.T keeps its established size; Instructor gets the extra width. */
+.classroom-workspace > .classroom-right-stack {
+  grid-template-columns: minmax(390px, 390px) minmax(560px, 1fr) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.classroom-right-stack > .frost-panel {
+  min-width: 390px !important;
+  width: 390px !important;
+  max-width: 390px !important;
+}
+
+.classroom-right-stack > .instructor-console-shell {
+  min-width: 560px !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* ---------- Instructor bar ---------- */
+
+.classroom-right-stack .instructor-console-toggle {
+  min-height: 66px !important;
+  padding: 11px 14px !important;
+  gap: 8px 12px !important;
+}
+
+.classroom-right-stack .instructor-console-title-row b {
+  font-size: 0.82rem !important;
+  letter-spacing: 0.08em;
+}
+
+.classroom-right-stack .instructor-console-title-row em {
+  font-size: 0.68rem !important;
+}
+
+.classroom-right-stack .instructor-console-toggle-left small {
+  max-width: 42ch !important;
+  font-size: 0.8rem !important;
+  line-height: 1.35 !important;
+}
+
+.classroom-right-stack .console-chip {
+  min-height: 28px !important;
+  padding: 0 9px !important;
+  font-size: 0.66rem !important;
+}
+
+.classroom-right-stack .instructor-console-toggle-action {
+  min-width: 124px !important;
+  min-height: 40px !important;
+  padding: 0 11px !important;
+  font-size: 0.72rem !important;
+}
+
+/* ---------- Main instructor console ---------- */
+
+.classroom-right-stack .instructor-console-body {
+  padding: 11px !important;
+}
+
+.classroom-right-stack .instructor-control-panel {
+  padding: 15px !important;
+}
+
+.classroom-right-stack .instructor-control-header {
+  gap: 12px !important;
+  margin-bottom: 13px !important;
+}
+
+.classroom-right-stack .instructor-control-header h2 {
+  font-size: 1.22rem !important;
+}
+
+.classroom-right-stack .instructor-control-panel .panel-label {
+  font-size: 0.72rem !important;
+  letter-spacing: 0.11em;
+}
+
+.classroom-right-stack .lock-assignment-button {
+  min-height: 40px !important;
+  padding: 0 12px !important;
+  font-size: 0.76rem !important;
+}
+
+.classroom-right-stack .instructor-control-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.classroom-right-stack .instructor-field {
+  gap: 6px !important;
+  padding: 10px !important;
+}
+
+.classroom-right-stack .instructor-field > span {
+  font-size: 0.7rem !important;
+  letter-spacing: 0.07em;
+}
+
+.classroom-right-stack .instructor-field input,
+.classroom-right-stack .instructor-field select {
+  min-height: 40px !important;
+  padding: 0 10px !important;
+  font-size: 0.9rem !important;
+}
+
+.classroom-right-stack .scenario-name-field input {
+  min-height: 42px !important;
+  font-size: 0.95rem !important;
+}
+
+.classroom-right-stack .scenario-details-field textarea {
+  min-height: 92px !important;
+  max-height: 190px !important;
+  padding: 10px 11px !important;
+  font-size: 0.88rem !important;
+  line-height: 1.5 !important;
+}
+
+.classroom-right-stack .instructor-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-top: 11px !important;
+}
+
+.classroom-right-stack .instructor-actions button {
+  min-height: 42px !important;
+  padding: 7px 9px !important;
+  font-size: 0.7rem !important;
+  line-height: 1.25 !important;
+}
+
+.classroom-right-stack .assignment-state {
+  margin-top: 11px !important;
+  padding: 12px 13px !important;
+  gap: 5px 10px !important;
+}
+
+.classroom-right-stack .assignment-state > span {
+  font-size: 0.68rem !important;
+}
+
+.classroom-right-stack .assignment-state > strong {
+  font-size: 0.88rem !important;
+}
+
+.classroom-right-stack .assignment-state > small {
+  font-size: 0.76rem !important;
+  line-height: 1.4;
+}
+
+/* ---------- Saved scenarios + timer ---------- */
+
+.instructor-tools-row {
+  grid-template-columns: minmax(0, 1.25fr) minmax(250px, 0.75fr) !important;
+  gap: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.saved-scenarios-tool,
+.assignment-timer-tool,
+.student-attempt-tool {
+  padding: 12px !important;
+  border-radius: 11px !important;
+}
+
+.instructor-tool-heading > span,
+.student-attempt-heading span {
+  font-size: 0.67rem !important;
+}
+
+.instructor-tool-heading > strong,
+.student-attempt-heading strong {
+  font-size: 0.88rem !important;
+}
+
+.saved-scenario-controls select {
+  min-height: 38px !important;
+  font-size: 0.82rem !important;
+  padding: 0 10px !important;
+}
+
+.saved-scenario-controls button,
+.timer-controls button {
+  min-height: 38px !important;
+  padding: 0 10px !important;
+  font-size: 0.65rem !important;
+}
+
+.timer-controls label > span {
+  font-size: 0.62rem !important;
+}
+
+.timer-controls input {
+  min-height: 38px !important;
+  font-size: 0.84rem !important;
+  padding: 0 9px !important;
+}
+
+/* ---------- Student attempt history ---------- */
+
+.student-attempt-tool {
+  margin-top: 11px !important;
+}
+
+.student-attempt-summary > span {
+  min-height: 30px !important;
+  padding: 0 9px !important;
+  font-size: 0.72rem !important;
+}
+
+.student-attempt-summary button {
+  min-height: 31px !important;
+  padding: 0 9px !important;
+  font-size: 0.62rem !important;
+}
+
+.student-attempt-empty {
+  padding: 12px !important;
+  font-size: 0.76rem !important;
+}
+
+.student-attempt-history {
+  gap: 7px !important;
+  max-height: 220px !important;
+}
+
+.student-attempt-row {
+  grid-template-columns: 38px minmax(115px, 1fr) minmax(135px, 1.25fr) auto auto !important;
+  gap: 8px !important;
+  padding: 9px 10px !important;
+}
+
+.attempt-number {
+  font-size: 0.72rem !important;
+}
+
+.attempt-result {
+  font-size: 0.72rem !important;
+}
+
+.attempt-status {
+  font-size: 0.66rem !important;
+}
+
+.attempt-time,
+.attempt-timer {
+  font-size: 0.64rem !important;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1700px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(480px, 0.84fr) minmax(900px, 1.16fr) !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(380px, 380px) minmax(500px, 1fr) !important;
+  }
+
+  .classroom-right-stack > .frost-panel {
+    min-width: 380px !important;
+    width: 380px !important;
+    max-width: 380px !important;
+  }
+
+  .classroom-right-stack > .instructor-console-shell {
+    min-width: 500px !important;
+  }
+}
+
+@media (max-width: 1480px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(460px, 0.9fr) minmax(820px, 1.1fr) !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(360px, 360px) minmax(440px, 1fr) !important;
+  }
+
+  .classroom-right-stack > .frost-panel {
+    min-width: 360px !important;
+    width: 360px !important;
+    max-width: 360px !important;
+  }
+
+  .classroom-right-stack > .instructor-console-shell {
+    min-width: 440px !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(360px, 0.8fr) minmax(500px, 1.2fr) !important;
+  }
+
+  .classroom-right-stack > .frost-panel {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+
+  .classroom-right-stack > .instructor-console-shell {
+    min-width: 0 !important;
+  }
+}
+
+@media (max-width: 940px) {
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: 1fr !important;
+  }
+
+  .instructor-tools-row,
+  .saved-scenario-controls,
+  .timer-controls,
+  .classroom-right-stack .instructor-control-grid,
+  .classroom-right-stack .instructor-actions {
+    grid-template-columns: 1fr !important;
+  }
+
+  .student-attempt-row {
+    grid-template-columns: 34px minmax(0, 1fr) auto !important;
+  }
+
+  .attempt-status {
+    grid-column: 2 / -1;
+    white-space: normal !important;
+  }
+}
+
+
+/* =========================================================
+   Fr.O.S.T WIDTH RESTORE
+   Keep the wider/larger Instructor Console, but restore and
+   enlarge the Fr.O.S.T panel instead of letting it compress.
+========================================================= */
+
+/* Give the right-side workstation enough total room for BOTH
+   panels at their intended widths. Keep the gap to the radio tight. */
+.classroom-workspace.simulator-layout {
+  grid-template-columns: minmax(500px, 0.76fr) minmax(1120px, 1.24fr) !important;
+  column-gap: 6px !important;
+  align-items: start !important;
+}
+
+/* Fr.O.S.T gets a protected fixed working width.
+   Instructor Console uses the remaining, larger share. */
+.classroom-workspace > .classroom-right-stack {
+  grid-template-columns: minmax(440px, 440px) minmax(650px, 1fr) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.classroom-right-stack > .frost-panel {
+  width: 440px !important;
+  min-width: 440px !important;
+  max-width: 440px !important;
+  flex: 0 0 440px !important;
+}
+
+.classroom-right-stack > .instructor-console-shell {
+  min-width: 650px !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Preserve the roomy 2x2 Fr.O.S.T presentation. */
+.classroom-right-stack .frost-primary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.classroom-right-stack .frost-primary-card {
+  min-width: 0;
+}
+
+/* Medium-large monitors: keep Fr.O.S.T protected rather than
+   shrinking it to pay for the Instructor Console width. */
+@media (max-width: 1800px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: minmax(480px, 0.78fr) minmax(1040px, 1.22fr) !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(420px, 420px) minmax(590px, 1fr) !important;
+  }
+
+  .classroom-right-stack > .frost-panel {
+    width: 420px !important;
+    min-width: 420px !important;
+    max-width: 420px !important;
+    flex-basis: 420px !important;
+  }
+
+  .classroom-right-stack > .instructor-console-shell {
+    min-width: 590px !important;
+  }
+}
+
+/* Once the screen can no longer comfortably hold radio + both
+   panels in one row, stack the radio above the dual control station
+   BEFORE squeezing Fr.O.S.T. */
+@media (max-width: 1580px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: minmax(420px, 420px) minmax(590px, 1fr) !important;
+    width: 100% !important;
+  }
+
+  .classroom-right-stack > .frost-panel {
+    width: 420px !important;
+    min-width: 420px !important;
+    max-width: 420px !important;
+  }
+
+  .classroom-right-stack > .instructor-console-shell {
+    min-width: 590px !important;
+  }
+}
+
+/* Only on genuinely narrower screens do the two control panels stack. */
+@media (max-width: 1080px) {
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: 1fr !important;
+  }
+
+  .classroom-right-stack > .frost-panel,
+  .classroom-right-stack > .instructor-console-shell {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex-basis: auto !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL WIDTH BALANCE
+   Instructor Console stays wide.
+   Fr.O.S.T stays at full intended width and NEVER gets squeezed.
+========================================================= */
+
+/* Allow enough room for radio + full Fr.O.S.T + wide instructor console. */
+.classroom-layout {
+  max-width: 1760px !important;
+}
+
+/* Keep the three working areas close together. */
+.classroom-workspace.simulator-layout {
+  grid-template-columns: minmax(500px, 500px) minmax(1140px, 1fr) !important;
+  column-gap: 8px !important;
+  align-items: start !important;
+}
+
+/* Right workstation = full-width Fr.O.S.T + wider Instructor Console. */
+.classroom-workspace > .classroom-right-stack {
+  display: grid !important;
+  grid-template-columns: 480px minmax(650px, 1fr) !important;
+  gap: 10px !important;
+  align-items: start !important;
+  min-width: 0 !important;
+}
+
+/* Fr.O.S.T is protected at full size. */
+.classroom-right-stack > .frost-panel {
+  width: 480px !important;
+  min-width: 480px !important;
+  max-width: 480px !important;
+  flex: 0 0 480px !important;
+  box-sizing: border-box !important;
+}
+
+/* Instructor Console remains the wider panel. */
+.classroom-right-stack > .instructor-console-shell {
+  width: 100% !important;
+  min-width: 650px !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Protect the 2x2 Fr.O.S.T cards from collapsing internally. */
+.classroom-right-stack .frost-primary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.classroom-right-stack .frost-primary-card {
+  min-width: 0 !important;
+}
+
+/*
+   IMPORTANT:
+   Do not gradually shrink Fr.O.S.T at smaller desktop widths.
+   When the browser no longer has enough horizontal room, move the
+   radio above the control station instead.
+*/
+@media (max-width: 1720px) {
+  .classroom-workspace.simulator-layout {
+    grid-template-columns: 1fr !important;
+    row-gap: 14px !important;
+  }
+
+  .classroom-workspace > .radio-stage {
+    justify-self: start !important;
+  }
+
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: 480px minmax(650px, 1fr) !important;
+    width: 100% !important;
+  }
+
+  .classroom-right-stack > .frost-panel {
+    width: 480px !important;
+    min-width: 480px !important;
+    max-width: 480px !important;
+    flex-basis: 480px !important;
+  }
+
+  .classroom-right-stack > .instructor-console-shell {
+    min-width: 650px !important;
+  }
+}
+
+/* Only stack Fr.O.S.T and Instructor Console when there is genuinely
+   not enough room for both at their intended sizes. */
+@media (max-width: 1180px) {
+  .classroom-workspace > .classroom-right-stack {
+    grid-template-columns: 1fr !important;
+  }
+
+  .classroom-right-stack > .frost-panel,
+  .classroom-right-stack > .instructor-console-shell {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex-basis: auto !important;
+  }
+}
+
+/* =========================================================
+   STUDENT SESSION + PERFORMANCE REPORT
+   Adds a full-width session workflow without changing the
+   approved radio / Fr.O.S.T / Instructor Console proportions.
+========================================================= */
+
+.student-session-shell {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(121, 157, 181, 0.22);
+  background:
+    linear-gradient(180deg, rgba(14, 23, 31, 0.98), rgba(8, 15, 21, 0.98));
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+}
+
+.student-session-shell.session-active {
+  border-color: rgba(72, 196, 132, 0.42);
+}
+
+.student-session-shell.session-complete {
+  border-color: rgba(117, 158, 191, 0.42);
+}
+
+.student-session-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.student-session-header .panel-label {
+  margin: 0 0 3px;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+
+.student-session-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.15;
+}
+
+.student-session-state {
+  min-width: 150px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(131, 157, 176, 0.2);
+  background: rgba(3, 10, 15, 0.52);
+  text-align: right;
+}
+
+.student-session-state span {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.58rem;
+  letter-spacing: 0.09em;
+  opacity: 0.72;
+}
+
+.student-session-state strong {
+  font-size: 0.98rem;
+}
+
+.session-active .student-session-state strong {
+  color: #77e3aa;
+}
+
+.student-session-controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(280px, 1.35fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.student-session-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(120, 151, 171, 0.17);
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.student-session-controls label > span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.student-session-controls input {
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(126, 161, 184, 0.25);
+  background: rgba(1, 7, 11, 0.78);
+  color: inherit;
+  font: inherit;
+  font-size: 0.92rem;
+  outline: none;
+}
+
+.student-session-controls input:focus {
+  border-color: rgba(99, 181, 235, 0.72);
+  box-shadow: 0 0 0 2px rgba(99, 181, 235, 0.12);
+}
+
+.student-session-controls input:disabled {
+  opacity: 0.72;
+}
+
+.student-session-actions {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.student-session-actions button {
+  min-height: 64px;
+  min-width: 136px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  border: 1px solid rgba(130, 165, 188, 0.25);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.begin-session-button {
+  background: linear-gradient(180deg, rgba(50, 137, 92, 0.96), rgba(31, 92, 62, 0.96));
+  color: white;
+}
+
+.end-session-button {
+  background: linear-gradient(180deg, rgba(166, 80, 61, 0.97), rgba(111, 49, 39, 0.97));
+  color: white;
+}
+
+.new-session-button {
+  background: rgba(53, 75, 91, 0.72);
+  color: white;
+}
+
+.student-session-actions button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.student-session-message {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin-top: 10px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: rgba(2, 8, 12, 0.48);
+}
+
+.student-session-message span {
+  flex: 0 0 auto;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  opacity: 0.7;
+}
+
+.student-session-message strong {
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.performance-report {
+  margin-top: 14px;
+  padding: 15px;
+  border-radius: 13px;
+  border: 1px solid rgba(121, 155, 178, 0.23);
+  background: rgba(3, 10, 15, 0.62);
+}
+
+.performance-report.report-pass {
+  border-color: rgba(73, 194, 130, 0.38);
+}
+
+.performance-report.report-fail {
+  border-color: rgba(206, 91, 78, 0.4);
+}
+
+.performance-report-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(125, 153, 172, 0.17);
+}
+
+.performance-report-header .panel-label {
+  margin: 0 0 3px;
+  font-size: 0.64rem;
+}
+
+.performance-report-header h2 {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+}
+
+.performance-report-header > div:first-child > span {
+  font-size: 0.78rem;
+  opacity: 0.78;
+}
+
+.performance-result-badge {
+  min-width: 145px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.performance-result-badge span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+}
+
+.performance-result-badge strong {
+  font-size: 1rem;
+}
+
+.report-pass .performance-result-badge strong {
+  color: #78e2a9;
+}
+
+.report-fail .performance-result-badge strong {
+  color: #ef8e82;
+}
+
+.performance-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.performance-overview-grid > div {
+  min-width: 0;
+  padding: 10px;
+  border-radius: 9px;
+  border: 1px solid rgba(121, 152, 173, 0.15);
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.performance-overview-grid > div:first-child {
+  grid-column: span 2;
+}
+
+.performance-overview-grid span,
+.performance-attempt-bookends span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+  opacity: 0.68;
+}
+
+.performance-overview-grid strong {
+  display: block;
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.performance-overview-grid small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.62rem;
+  opacity: 0.68;
+}
+
+.performance-frost-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.performance-frost-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 1px 9px;
+  align-items: center;
+  padding: 10px 11px;
+  border-radius: 9px;
+  border: 1px solid rgba(125, 153, 173, 0.16);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.performance-frost-card > span {
+  grid-row: 1 / 3;
+  font-size: 1.12rem;
+  font-weight: 900;
+}
+
+.performance-frost-card > strong {
+  font-size: 1rem;
+}
+
+.performance-frost-card > small {
+  font-size: 0.62rem;
+  opacity: 0.7;
+}
+
+.performance-fr > span { color: #78c8ff; }
+.performance-o > span { color: #ffca72; }
+.performance-s > span { color: #c49cff; }
+.performance-t > span { color: #77e3aa; }
+
+.performance-attempt-bookends {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.performance-attempt-bookends > div {
+  padding: 11px;
+  border-radius: 9px;
+  border: 1px solid rgba(124, 153, 174, 0.16);
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.performance-attempt-bookends strong {
+  display: block;
+  font-size: 0.86rem;
+}
+
+.performance-attempt-bookends small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.65rem;
+  opacity: 0.7;
+}
+
+@media (max-width: 1220px) {
+  .student-session-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .student-session-actions {
+    grid-column: 1 / -1;
+  }
+
+  .student-session-actions button {
+    min-height: 42px;
+  }
+
+  .performance-overview-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .student-session-header,
+  .performance-report-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .student-session-state,
+  .performance-result-badge {
+    text-align: left;
+  }
+
+  .student-session-controls,
+  .performance-overview-grid,
+  .performance-frost-grid,
+  .performance-attempt-bookends {
+    grid-template-columns: 1fr;
+  }
+
+  .performance-overview-grid > div:first-child {
+    grid-column: auto;
+  }
+
+  .student-session-actions {
+    flex-direction: column;
+  }
+
+  .student-session-actions button {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   INSTRUCTOR GRADING CONTROLS
+========================================================= */
+
+.grading-controls-tool {
+  margin: 10px 0 12px;
+  padding: 14px;
+  border: 1px solid rgba(138, 180, 248, 0.18);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(18, 30, 45, 0.94), rgba(10, 18, 28, 0.96));
+}
+
+.grading-controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.grading-controls-header > div {
+  min-width: 0;
+}
+
+.grading-controls-header span {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.grading-controls-header strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.96rem;
+}
+
+.grading-mode-chip {
+  flex: 0 0 auto;
+  min-height: 28px;
+  display: inline-flex !important;
+  align-items: center;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 0.62rem !important;
+  font-weight: 700;
+}
+
+.grading-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.grading-control-card,
+.grading-toggle-card {
+  min-width: 0;
+  min-height: 108px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.grading-control-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grading-control-card > span,
+.grading-toggle-card > span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.grading-control-card input,
+.grading-control-card select {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.22);
+  color: inherit;
+  font-size: 0.88rem;
+  box-sizing: border-box;
+}
+
+.grading-control-card small {
+  font-size: 0.68rem;
+  line-height: 1.35;
+  opacity: 0.7;
+}
+
+.grading-toggle-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "label toggle"
+    "state state";
+  gap: 8px 10px;
+  align-items: center;
+}
+
+.grading-toggle-card > span {
+  grid-area: label;
+}
+
+.grading-toggle-card input[type="checkbox"] {
+  grid-area: toggle;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: currentColor;
+}
+
+.grading-toggle-card strong {
+  grid-area: state;
+  align-self: end;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.grading-pass-rule {
+  grid-column: span 2;
+}
+
+/* =========================================================
+   PERFORMANCE REPORT — GRADING SUMMARY
+========================================================= */
+
+.performance-grading-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.performance-grading-summary > div {
+  min-width: 0;
+  padding: 10px 11px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.performance-grading-summary span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.68;
+}
+
+.performance-grading-summary strong {
+  display: block;
+  font-size: 0.8rem;
+}
+
+.performance-pass-reason {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-top: 9px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.performance-pass-reason span {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.performance-pass-reason strong {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 1500px) {
+  .grading-controls-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grading-pass-rule {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 1180px) {
+  .grading-controls-grid,
+  .performance-grading-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .grading-pass-rule {
+    grid-column: auto;
+  }
+
+  .grading-controls-header,
+  .performance-pass-reason {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+
+/* =========================================================
+   INSTRUCTOR OVERRIDE CONTROLS
+========================================================= */
+
+.instructor-override-panel {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(22, 28, 38, 0.96), rgba(12, 18, 26, 0.98));
+}
+
+.instructor-override-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.instructor-override-header > div {
+  min-width: 0;
+}
+
+.instructor-override-header span {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.instructor-override-header strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.94rem;
+}
+
+.override-status-chip {
+  flex: 0 0 auto;
+  min-height: 30px;
+  display: inline-flex !important;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 0.63rem !important;
+  font-weight: 800;
+}
+
+.override-status-chip.override-pass {
+  border-color: rgba(70, 210, 135, 0.45);
+  background: rgba(70, 210, 135, 0.12);
+}
+
+.override-status-chip.override-fail {
+  border-color: rgba(255, 100, 100, 0.45);
+  background: rgba(255, 100, 100, 0.12);
+}
+
+.override-system-result {
+  display: grid;
+  grid-template-columns: minmax(145px, 0.35fr) minmax(0, 1.65fr);
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.override-system-result > div {
+  padding: 10px 11px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.override-system-result span,
+.override-note-field > span,
+.override-note-display span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.override-system-result strong {
+  display: block;
+  font-size: 0.79rem;
+  line-height: 1.4;
+}
+
+.override-note-field {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.override-note-field textarea {
+  width: 100%;
+  min-height: 76px;
+  max-height: 150px;
+  resize: vertical;
+  box-sizing: border-box;
+  padding: 10px 11px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  font: inherit;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.instructor-override-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.instructor-override-actions button {
+  min-height: 42px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.override-pass-button {
+  border: 1px solid rgba(70, 210, 135, 0.42);
+  background: rgba(70, 210, 135, 0.11);
+}
+
+.override-fail-button {
+  border: 1px solid rgba(255, 100, 100, 0.42);
+  background: rgba(255, 100, 100, 0.11);
+}
+
+.override-reopen-button {
+  border: 1px solid rgba(110, 170, 255, 0.42);
+  background: rgba(110, 170, 255, 0.11);
+}
+
+.override-note-display {
+  margin-top: 10px;
+  padding: 10px 11px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.override-note-display strong {
+  display: block;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .instructor-override-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .override-system-result,
+  .instructor-override-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   SCENARIO-SPECIFIC GRADING PRESET PREVIEW
+========================================================= */
+
+.saved-scenarios-tool {
+  align-self: stretch;
+}
+
+.saved-scenario-controls {
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  gap: 8px !important;
+}
+
+.saved-scenario-controls button {
+  white-space: nowrap;
+}
+
+.saved-grading-preset-preview {
+  margin-top: 10px;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.saved-grading-preset-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.saved-grading-preset-heading span {
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.saved-grading-preset-heading strong {
+  font-size: 0.64rem;
+  letter-spacing: 0.05em;
+}
+
+.saved-grading-preset-preview p {
+  margin: 7px 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  opacity: 0.82;
+}
+
+.saved-grading-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.saved-grading-preset-grid > div {
+  min-width: 0;
+  padding: 8px 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.saved-grading-preset-grid span {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.saved-grading-preset-grid strong {
+  display: block;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.grading-controls-header small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  opacity: 0.7;
+}
+
+@media (max-width: 1450px) {
+  .saved-scenario-controls {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .saved-scenario-controls select {
+    grid-column: 1 / -1;
+  }
+
+  .saved-grading-preset-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .saved-scenario-controls,
+  .saved-grading-preset-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .saved-scenario-controls select {
+    grid-column: auto;
+  }
+}
