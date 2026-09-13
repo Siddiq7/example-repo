@@ -11,6 +11,7 @@ import "./App.css";
 import "./FrostPanel.css";
 import "./InstructorControl.css";
 import "./Classroom.css";
+import "./LiveRoster.css";
 
 import {
   closeRoom,
@@ -22,6 +23,7 @@ import {
   leaveRoom,
   recordAttempt as recordClassroomAttempt,
   updateAssignment,
+  updateStudentLiveStatus,
   type ClassroomParticipant,
 } from "./lib/classroomApi";
 
@@ -1622,6 +1624,245 @@ function App() {
         "OFF"
       : radio.vfoA.shiftDirection;
 
+  useEffect(() => {
+    if (
+      !participantId ||
+      !participantToken ||
+      classroomRole !== "STUDENT"
+    ) {
+      return;
+    }
+
+    const activeParticipantId = participantId;
+    const activeParticipantToken = participantToken;
+
+    const timeoutId = window.setTimeout(() => {
+      const liveResult =
+        evaluateInstructorAssignment(false);
+
+      const liveStatus =
+        liveResult?.accessStatus ??
+        (appliedAssignment
+          ? "NOT READY"
+          : "WAITING FOR ASSIGNMENT");
+
+      void updateStudentLiveStatus(
+        activeParticipantId,
+        activeParticipantToken,
+        {
+          frequency:
+            liveResult?.frequency ?? null,
+          observation:
+            liveResult?.offset ?? null,
+          signal:
+            liveResult?.shift ?? null,
+          transmission:
+            liveResult?.tone ?? null,
+
+          offset:
+            liveResult?.offset ?? null,
+          shift:
+            liveResult?.shift ?? null,
+          tone:
+            liveResult?.tone ?? null,
+
+          accessStatus:
+            liveStatus,
+
+          programmedRxHz:
+            rxFrequency,
+          programmedTxHz:
+            txFrequency,
+          programmedOffsetHz,
+          programmedShiftDirection,
+          programmedToneHz:
+            txTone,
+        },
+        studentSessionActive
+          ? "IN EXERCISE"
+          : appliedAssignment
+          ? "CONNECTED"
+          : "WAITING"
+      ).catch(() => {
+        // Classroom telemetry must never interrupt the radio simulator.
+      });
+    }, 250);
+
+    return () =>
+      window.clearTimeout(timeoutId);
+  }, [
+    participantId,
+    participantToken,
+    classroomRole,
+    appliedAssignment,
+    studentSessionActive,
+    rxFrequency,
+    txFrequency,
+    txTone,
+    programmedOffsetHz,
+    programmedShiftDirection,
+  ]);
+
+  function getRosterFrost(
+    student: ClassroomParticipant
+  ): Record<string, unknown> {
+    return (
+      student.frost_status ??
+      {}
+    ) as Record<string, unknown>;
+  }
+
+  function getRosterNumber(
+    student: ClassroomParticipant,
+    key: string
+  ): number | null {
+    const value =
+      getRosterFrost(student)[key];
+
+    return typeof value === "number" &&
+      Number.isFinite(value)
+      ? value
+      : null;
+  }
+
+  function getRosterString(
+    student: ClassroomParticipant,
+    key: string
+  ): string | null {
+    const value =
+      getRosterFrost(student)[key];
+
+    return typeof value === "string"
+      ? value
+      : null;
+  }
+
+  function rosterMatchClass(
+    value: string | null
+  ): string {
+    if (value === "MATCH") {
+      return "roster-match";
+    }
+
+    if (value === "NO MATCH") {
+      return "roster-no-match";
+    }
+
+    return "roster-unknown";
+  }
+
+  function formatRosterFrequency(
+    student: ClassroomParticipant
+  ): string {
+    const rx =
+      getRosterNumber(
+        student,
+        "programmedRxHz"
+      );
+
+    const tx =
+      getRosterNumber(
+        student,
+        "programmedTxHz"
+      );
+
+    if (
+      rx === null &&
+      tx === null
+    ) {
+      return "—";
+    }
+
+    const rxText =
+      rx === null
+        ? "—"
+        : (
+            rx /
+            1_000_000
+          ).toFixed(3);
+
+    const txText =
+      tx === null
+        ? "—"
+        : (
+            tx /
+            1_000_000
+          ).toFixed(3);
+
+    return `${rxText} / ${txText}`;
+  }
+
+  function formatRosterObservation(
+    student: ClassroomParticipant
+  ): string {
+    const offset =
+      getRosterNumber(
+        student,
+        "programmedOffsetHz"
+      );
+
+    if (offset === null) {
+      return "—";
+    }
+
+    return `${(
+      offset /
+      1_000_000
+    ).toFixed(3)} MHz`;
+  }
+
+  function formatRosterSignal(
+    student: ClassroomParticipant
+  ): string {
+    return (
+      getRosterString(
+        student,
+        "programmedShiftDirection"
+      ) ??
+      "—"
+    );
+  }
+
+  function formatRosterTransmission(
+    student: ClassroomParticipant
+  ): string {
+    const tone =
+      getRosterNumber(
+        student,
+        "programmedToneHz"
+      );
+
+    if (tone === null) {
+      const raw =
+        getRosterFrost(student)[
+          "programmedToneHz"
+        ];
+
+      return raw === null
+        ? "OFF"
+        : "—";
+    }
+
+    return `${tone.toFixed(1)} Hz`;
+  }
+
+  function rosterCurrentStatus(
+    student: ClassroomParticipant
+  ): string {
+    if (!student.connected) {
+      return "DISCONNECTED";
+    }
+
+    return (
+      getRosterString(
+        student,
+        "accessStatus"
+      ) ??
+      student.session_status ??
+      "CONNECTED"
+    );
+  }
+
   function saveCurrentScenario() {
     const scenarioName =
       instructorDraft.scenarioName.trim() ||
@@ -3177,11 +3418,22 @@ function App() {
         },
         {
           frequency: result.frequency,
+          observation: result.offset,
+          signal: result.shift,
+          transmission: result.tone,
           offset: result.offset,
           shift: result.shift,
           tone: result.tone,
           accessStatus:
             result.accessStatus,
+          programmedRxHz:
+            rxFrequency,
+          programmedTxHz:
+            txFrequency,
+          programmedOffsetHz,
+          programmedShiftDirection,
+          programmedToneHz:
+            txTone,
         }
       ).catch(() => {
         // Keep local training session running even if the room update fails.
@@ -3702,10 +3954,23 @@ function App() {
                 </button>
               </div>
 
-              <div className="classroom-roster">
-                <div className="classroom-roster-header">
+              <div className="classroom-roster live-instructor-roster">
+                <div className="live-roster-titlebar">
+                  <div>
+                    <span>LIVE INSTRUCTOR ROSTER</span>
+                    <strong>Student Radio Programming Monitor</strong>
+                  </div>
+                  <small>
+                    Updates automatically while students program their virtual HTs.
+                  </small>
+                </div>
+
+                <div className="classroom-roster-header live-roster-grid">
                   <span>Student</span>
-                  <span>Class</span>
+                  <span>Frequency</span>
+                  <span>Observation</span>
+                  <span>Signal</span>
+                  <span>Transmission</span>
                   <span>Attempts</span>
                   <span>Status</span>
                 </div>
@@ -3715,14 +3980,114 @@ function App() {
                     Waiting for students to join room {roomCode}.
                   </div>
                 ) : (
-                  connectedStudents.map(student => (
-                    <div className="classroom-roster-row" key={student.id}>
-                      <strong>{student.student_name}</strong>
-                      <span>{student.class_name || "—"}</span>
-                      <span>{student.attempt_count}</span>
-                      <span>{student.connected ? student.session_status : "DISCONNECTED"}</span>
-                    </div>
-                  ))
+                  connectedStudents.map(student => {
+                    const frost =
+                      getRosterFrost(student);
+
+                    const frequencyMatch =
+                      typeof frost.frequency === "string"
+                        ? frost.frequency
+                        : null;
+
+                    const observationMatch =
+                      typeof frost.observation === "string"
+                        ? frost.observation
+                        : typeof frost.offset === "string"
+                        ? frost.offset
+                        : null;
+
+                    const signalMatch =
+                      typeof frost.signal === "string"
+                        ? frost.signal
+                        : typeof frost.shift === "string"
+                        ? frost.shift
+                        : null;
+
+                    const transmissionMatch =
+                      typeof frost.transmission === "string"
+                        ? frost.transmission
+                        : typeof frost.tone === "string"
+                        ? frost.tone
+                        : null;
+
+                    const currentStatus =
+                      rosterCurrentStatus(student);
+
+                    return (
+                      <div
+                        className="classroom-roster-row live-roster-grid"
+                        key={student.id}
+                      >
+                        <div className="live-roster-student">
+                          <strong>{student.student_name}</strong>
+                          <small>{student.class_name || "No class entered"}</small>
+                        </div>
+
+                        <div className="live-roster-reading">
+                          <span
+                            className={`live-roster-dot ${rosterMatchClass(
+                              frequencyMatch
+                            )}`}
+                          />
+                          <strong>{formatRosterFrequency(student)}</strong>
+                          <small>RX / TX MHz</small>
+                        </div>
+
+                        <div className="live-roster-reading">
+                          <span
+                            className={`live-roster-dot ${rosterMatchClass(
+                              observationMatch
+                            )}`}
+                          />
+                          <strong>{formatRosterObservation(student)}</strong>
+                          <small>Offset</small>
+                        </div>
+
+                        <div className="live-roster-reading">
+                          <span
+                            className={`live-roster-dot ${rosterMatchClass(
+                              signalMatch
+                            )}`}
+                          />
+                          <strong>{formatRosterSignal(student)}</strong>
+                          <small>Shift</small>
+                        </div>
+
+                        <div className="live-roster-reading">
+                          <span
+                            className={`live-roster-dot ${rosterMatchClass(
+                              transmissionMatch
+                            )}`}
+                          />
+                          <strong>{formatRosterTransmission(student)}</strong>
+                          <small>TX Tone</small>
+                        </div>
+
+                        <div className="live-roster-attempts">
+                          <strong>{student.attempt_count}</strong>
+                          <small>PTT</small>
+                        </div>
+
+                        <div
+                          className={`live-roster-status ${
+                            currentStatus === "READY" ||
+                            currentStatus === "ACCESS GRANTED" ||
+                            currentStatus === "SIMPLEX READY" ||
+                            currentStatus === "SIMPLEX TX"
+                              ? "status-ready"
+                              : currentStatus === "DISCONNECTED"
+                              ? "status-offline"
+                              : "status-not-ready"
+                          }`}
+                        >
+                          <strong>{currentStatus}</strong>
+                          <small>
+                            {student.connected ? "LIVE" : "OFFLINE"}
+                          </small>
+                        </div>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>

@@ -1,0 +1,188 @@
+.live-instructor-roster {
+  overflow-x: auto;
+}
+
+.live-roster-titlebar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.025);
+}
+
+.live-roster-titlebar > div > span {
+  display: block;
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  opacity: .62;
+}
+
+.live-roster-titlebar > div > strong {
+  display: block;
+  margin-top: 3px;
+  font-size: .9rem;
+}
+
+.live-roster-titlebar > small {
+  max-width: 42ch;
+  text-align: right;
+  font-size: .68rem;
+  line-height: 1.35;
+  opacity: .62;
+}
+
+.classroom-roster-header.live-roster-grid,
+.classroom-roster-row.live-roster-grid {
+  min-width: 1040px;
+  grid-template-columns:
+    minmax(150px, 1.15fr)
+    minmax(155px, 1.1fr)
+    minmax(120px, .85fr)
+    minmax(105px, .72fr)
+    minmax(120px, .82fr)
+    minmax(70px, .5fr)
+    minmax(150px, 1fr);
+  gap: 10px;
+}
+
+.classroom-roster-header.live-roster-grid {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.live-roster-student,
+.live-roster-reading,
+.live-roster-attempts,
+.live-roster-status {
+  min-width: 0;
+}
+
+.live-roster-student strong,
+.live-roster-reading strong,
+.live-roster-attempts strong,
+.live-roster-status strong {
+  display: block;
+}
+
+.live-roster-student small,
+.live-roster-reading small,
+.live-roster-attempts small,
+.live-roster-status small {
+  display: block;
+  margin-top: 3px;
+  font-size: .58rem;
+  line-height: 1.15;
+  opacity: .58;
+}
+
+.live-roster-reading {
+  position: relative;
+  padding-left: 16px;
+}
+
+.live-roster-reading strong {
+  white-space: nowrap;
+  font-size: .73rem;
+}
+
+.live-roster-dot {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.26);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.04);
+}
+
+.live-roster-dot.roster-match {
+  background: #59d98e;
+  box-shadow: 0 0 0 3px rgba(89,217,142,.10);
+}
+
+.live-roster-dot.roster-no-match {
+  background: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255,107,107,.10);
+}
+
+.live-roster-dot.roster-unknown {
+  background: rgba(255,255,255,.26);
+}
+
+.live-roster-attempts {
+  text-align: center;
+}
+
+.live-roster-attempts strong {
+  font-size: 1.05rem;
+}
+
+.live-roster-status {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 34px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.035);
+}
+
+.live-roster-status strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .64rem;
+  letter-spacing: .03em;
+}
+
+.live-roster-status.status-ready {
+  border-color: rgba(89,217,142,.32);
+  background: rgba(89,217,142,.09);
+}
+
+.live-roster-status.status-not-ready {
+  border-color: rgba(255,184,77,.28);
+  background: rgba(255,184,77,.07);
+}
+
+.live-roster-status.status-offline {
+  opacity: .55;
+}
+
+@media (max-width: 900px) {
+  .live-roster-titlebar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .live-roster-titlebar > small {
+    text-align: left;
+  }
+
+  .classroom-roster-header.live-roster-grid,
+  .classroom-roster-row.live-roster-grid {
+    display: grid;
+    min-width: 920px;
+    grid-template-columns:
+      150px
+      150px
+      115px
+      100px
+      115px
+      65px
+      145px;
+  }
+
+  .classroom-roster-header.live-roster-grid span,
+  .classroom-roster-row.live-roster-grid > * {
+    display: block;
+  }
+}

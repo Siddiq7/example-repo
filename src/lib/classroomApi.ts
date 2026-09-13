@@ -153,6 +153,20 @@ export async function recordAttempt(
   });
 }
 
+export async function updateStudentLiveStatus(
+  participantId: string,
+  participantToken: string,
+  frostStatus: unknown,
+  sessionStatus: string
+) {
+  return rpc<boolean>("bs_update_student_live_status", {
+    p_participant_id: participantId,
+    p_participant_token: participantToken,
+    p_frost_status: frostStatus,
+    p_session_status: sessionStatus,
+  });
+}
+
 export async function heartbeat(
   participantId: string,
   participantToken: string
