@@ -1,0 +1,242 @@
+.classroom-connection-panel {
+  margin: 0 0 16px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: linear-gradient(180deg, rgba(16, 25, 38, 0.97), rgba(9, 15, 24, 0.98));
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
+}
+
+.classroom-connection-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.classroom-connection-header h2 {
+  margin: 3px 0 4px;
+  font-size: 1.25rem;
+}
+
+.classroom-connection-header p {
+  margin: 0;
+  max-width: 70ch;
+  opacity: 0.72;
+  line-height: 1.45;
+}
+
+.classroom-live-badge {
+  flex: 0 0 auto;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  font-size: .67rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+
+.classroom-live-badge.is-live {
+  border-color: rgba(74, 211, 133, .35);
+  background: rgba(74, 211, 133, .09);
+}
+
+.classroom-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.classroom-entry-card {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.025);
+}
+
+.classroom-entry-card > span,
+.classroom-room-code > span,
+.classroom-student-connected span {
+  display: block;
+  font-size: .65rem;
+  letter-spacing: .1em;
+  font-weight: 800;
+  opacity: .66;
+}
+
+.classroom-entry-card > strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1rem;
+}
+
+.classroom-entry-card > p {
+  margin: 5px 0 12px;
+  font-size: .78rem;
+  line-height: 1.4;
+  opacity: .68;
+}
+
+.classroom-entry-card label {
+  display: block;
+  margin: 8px 0;
+  font-size: .68rem;
+  font-weight: 700;
+}
+
+.classroom-entry-card input {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 5px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.2);
+  color: inherit;
+  box-sizing: border-box;
+  font-size: .9rem;
+}
+
+.classroom-entry-card button,
+.classroom-room-actions button,
+.classroom-student-connected button {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 9px;
+  font-weight: 800;
+  font-size: .68rem;
+}
+
+.classroom-instructor-room {
+  margin-top: 14px;
+}
+
+.classroom-room-code {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: baseline;
+  gap: 8px 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(90, 165, 255, .2);
+  background: rgba(90, 165, 255, .06);
+}
+
+.classroom-room-code strong {
+  font-size: 1.7rem;
+  letter-spacing: .12em;
+}
+
+.classroom-room-code small {
+  justify-self: end;
+  opacity: .72;
+}
+
+.classroom-room-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.classroom-roster {
+  margin-top: 10px;
+  border-radius: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.classroom-roster-header,
+.classroom-roster-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr .5fr .8fr;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.classroom-roster-header {
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,.04);
+}
+
+.classroom-roster-row {
+  border-top: 1px solid rgba(255,255,255,.06);
+  font-size: .76rem;
+}
+
+.classroom-roster-empty {
+  padding: 14px 12px;
+  font-size: .78rem;
+  opacity: .68;
+}
+
+.classroom-student-connected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(74,211,133,.2);
+  background: rgba(74,211,133,.06);
+}
+
+.classroom-student-connected strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 1.35rem;
+  letter-spacing: .1em;
+}
+
+.classroom-student-connected small {
+  display: block;
+  margin-top: 3px;
+  opacity: .7;
+}
+
+.classroom-connection-message {
+  margin-top: 10px;
+  font-size: .74rem;
+  line-height: 1.4;
+  opacity: .78;
+}
+
+@media (max-width: 900px) {
+  .classroom-entry-grid,
+  .classroom-room-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .classroom-connection-header,
+  .classroom-student-connected {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .classroom-room-code {
+    grid-template-columns: 1fr;
+  }
+
+  .classroom-room-code small {
+    justify-self: start;
+  }
+
+  .classroom-roster-header,
+  .classroom-roster-row {
+    grid-template-columns: 1fr .6fr .8fr;
+  }
+
+  .classroom-roster-header span:nth-child(2),
+  .classroom-roster-row span:nth-child(2) {
+    display: none;
+  }
+}
